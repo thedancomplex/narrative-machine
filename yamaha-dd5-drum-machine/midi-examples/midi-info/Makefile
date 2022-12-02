@@ -3,13 +3,17 @@ default: all
 CFLAGS := -I./include -I/etc/dynamixel-ach/include/ -Wall
 CC := g++
 
-BINARIES := 1-dof-drummer
+BINARIES := main
 all : $(BINARIES)
 
 LIBS := -lrt -lstdc++ -lach
 
-$(BINARIES): src/main.o
-	gcc -o $@ $< $(LIBS)
+OBJS = src/main.o      \
+       src/Sequencer.o 
+
+$(BINARIES): $(OBJS)
+	$(CC) -o $@ $< $(LIBS)  
+#	$(CC) -o $@ $< $(LIBS) $(OBJS)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
