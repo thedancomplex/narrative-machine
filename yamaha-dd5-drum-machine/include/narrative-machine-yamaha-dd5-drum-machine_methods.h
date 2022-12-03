@@ -35,77 +35,92 @@ double mot_pos = 0.2;
 double bpm     = 480.0 * 2.0;
 double f       = (bpm / 60.0);
 
-NmYamahaDD5::NmYamahaDD5()
+NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
 {
   memset(&this->mot_calibrate, 0, sizeof(mot_calibrate));
-}
-
-
-int main()
-{ 
-  /* Make System Object */
-  DynamixelAchClient dac = DynamixelAchClient();
-
-  int r = 0;
-
-  /* Turn On System */
-  r = dac.cmd(DYNAMIXEL_CMD_ON, true);
-  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
-  else{ printf("1\n"); return 1; }
-
-
-  /* Add ID */
-  r = dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)MOT_ID_LEFT);
-  r = dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)MOT_ID_RIGHT);
-  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
-  else{ printf("1\n"); return 1; }
-
-  printf("Freq = %f\n", f/2.0);
-  dac.rate( f );
-
-  while(1)
+  for(int i = 0; i < DD5_MOT_NUM; i++)
   {
-
-    /* Put all sticks up */ 
-    dac.stageRefPos(MOT_ID_LEFT,     -mot_pos);
-    dac.stageRefPos(MOT_ID_RIGHT,    -mot_pos);
-
-    dac.stageRefVel(MOT_ID_LEFT,     MOT_VEL_CALIBRATE);
-    dac.stageRefVel(MOT_ID_RIGHT,    MOT_VEL_CALIBRATE);
-
-    dac.stageRefTorque(MOT_ID_LEFT,  MOT_TOR_CALIBRATE);
-    dac.stageRefTorque(MOT_ID_RIGHT, MOT_TOR_CALIBRATE);
-    dac.postRef();
-    dac.sleep();
-    printf("Putting sticks up");
-    dac.sleep(5.0);
-
-
-    dac.stageRefPos(MOT_ID_LEFT,     mot_pos);
-    dac.stageRefPos(MOT_ID_RIGHT,    mot_pos);
-
-    dac.stageRefVel(MOT_ID_LEFT,     MOT_VEL_CALIBRATE);
-    dac.stageRefVel(MOT_ID_RIGHT,    MOT_VEL_CALIBRATE);
-
-    dac.stageRefTorque(MOT_ID_LEFT,  MOT_TOR_CALIBRATE);
-    dac.stageRefTorque(MOT_ID_RIGHT, MOT_TOR_CALIBRATE);
-    dac.postRef();
-    dac.sleep();
-    dac.sleep(5.0);
-
-    dac.getState();
-    int    id  = MOT_ID;
-    double ref = dac.dynamixel_state.motor_ref[id].pos;
-    double pos = dac.dynamixel_state.motor_state[id].pos;
-    double t   = dac.time();
-    printf("t %f id %d ref %f pos %f\n", t, id, ref, pos);
-    break;
+    this->mot_calibrate.mot[i].dir = 1.0;
   }
 
-  /* Turn Off System */
-  r = dac.cmd(DYNAMIXEL_CMD_OFF, true);
-  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
-  else{ printf("1\n"); return 1; }
+  /* Make System Object */
+  this->dac = DynamixelAchClient();
 
-  return 0;
+  /* Add Motors */
+  this->addMotor(STICK_0);
 }
+
+int NarrativeMachineYamahaDD5::addMotor(int mot)
+{
+  int r = dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)mot);
+  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
+  else{ 
+    if(do_debut) printf("%s ERROR - Add Motor\n", DD5_HEADER); 
+    return DD5_FAIL; 
+  }
+  return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::calibrate(mot_def_t *data, int mot)
+{
+    double dir      = data->mot[mot].dir;
+    double pos_up   = data->mot[mot].pos_up;
+    double pos_down = data->mot[mot].pos_down;
+    double vel      = data->mot[mot].vel;
+    double tor      = data->mot[mot].tor;
+
+    /* Put stick up */ 
+    this->dac.stageRefPos(mot,     pos_up * dir);
+    this->dac.stageRefVel(mot,     vel);
+    this->dac.stageRefTorque(mot,  tor);
+    this->dac.postRef();
+    printf("Putting sticks up");
+    this->dac.sleep(5.0);
+
+    /* Put stick down */ 
+    this->dac.stageRefPos(mot,     pos_down * dir);
+    this->dac.stageRefVel(mot,     vel);
+    this->dac.stageRefTorque(mot,  tor);
+    this->dac.postRef();
+    printf("Putting sticks up");
+    this->dac.sleep(5.0);
+
+    /* Get State */
+    dac.getState();
+    double ref = this->dac.dynamixel_state.motor_ref[mot].pos;
+    double pos = this->dac.dynamixel_state.motor_state[mot].pos;
+    double t   = this->dac.time();
+    printf("t %f id %d ref %f pos %f\n", t, mot, ref, pos);
+    
+    return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::on()
+{
+  return this->on(true);
+}
+
+int NarrativeMachineYamahaDD5::on( bool low-latency )
+{
+  /* Turn On System */
+  r = this->dac.cmd(DYNAMIXEL_CMD_ON, true);
+  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
+  else{ 
+    if(do_debut) printf("%s ERROR - On\n", DD5_HEADER); 
+    return DD5_FAIL; 
+  }
+  return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::off()
+{
+  /* Turn On System */
+  r = this->dac.cmd(DYNAMIXEL_CMD_OFF);
+  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
+  else{ 
+    if(do_debut) printf("%s ERROR - Off\n", DD5_HEADER); 
+    return DD5_FAIL; 
+  }
+  return DD5_OK;
+}
+
