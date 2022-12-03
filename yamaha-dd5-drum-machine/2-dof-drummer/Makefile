@@ -1,9 +1,9 @@
 default: all
 
-CFLAGS := -I./include -I/etc/dynamixel-ach/include/ -Wall
+CFLAGS := -I./include -I../include -I/etc/dynamixel-ach/include/ -Wall
 CC := g++
 
-BINARIES := 1-dof-drummer
+BINARIES := main
 all : $(BINARIES)
 
 LIBS := -lrt -lstdc++ -lach

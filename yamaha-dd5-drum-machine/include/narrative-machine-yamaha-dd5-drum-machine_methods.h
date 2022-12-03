@@ -16,6 +16,9 @@
 
 /* Author: Daniel M. Lofaro */
 
+
+#define NM_YAMAHA_DD5_METHODS 1
+
 #include <lofaro_dynamixel_ach_client.h>
 #include <unistd.h>
 #include <string.h>
@@ -31,6 +34,11 @@
 double mot_pos = 0.2;
 double bpm     = 480.0 * 2.0;
 double f       = (bpm / 60.0);
+
+NmYamahaDD5::NmYamahaDD5()
+{
+  memset(&this->mot_calibrate, 0, sizeof(mot_calibrate));
+}
 
 
 int main()
