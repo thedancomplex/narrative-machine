@@ -23,31 +23,25 @@
 #include <unistd.h>
 #include <string.h>
 
-#define MOT_ID_LEFT            4
-#define MOT_ID_RIGHT           3
-#define MOT_ID                 MOT_ID_LEFT
-#define MOT_VEL                100.0
-#define MOT_TOR                0.3
-#define MOT_VEL_CALIBRATE      0.5
-#define MOT_TOR_CALIBRATE      0.15
-
-double mot_pos = 0.2;
-double bpm     = 480.0 * 2.0;
-double f       = (bpm / 60.0);
-
 NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
 {
   memset(&this->mot_calibrate, 0, sizeof(mot_calibrate));
   for(int i = 0; i < DD5_MOT_NUM; i++)
   {
-    this->mot_calibrate.mot[i].dir = 1.0;
+    this->mot_calibrate.mot[i].dir      = 1.0;
+    this->mot_calibrate.mot[i].tor      = MOT_TOR_CALIBRATE;
+    this->mot_calibrate.mot[i].vel      = MOT_VEL_CALIBRATE;
+    this->mot_calibrate.mot[i].pos_up   = MOT_POS_UP_CALIBRATE;
+    this->mot_calibrate.mot[i].pos_down = MOT_POS_DOWN_CALIBRATE;
+    this->mot_calibrate.mot[i].ratio    = MOT_HIT_RATIO;
   }
 
   /* Make System Object */
-  this->dac = DynamixelAchClient();
+ // this->dac = DynamixelAchClient();
 
   /* Add Motors */
-  this->addMotor(STICK_0);
+  this->addMotor(MOT_ID_STICK_0);
+  this->addMotor(MOT_ID_STICK_1);
 }
 
 int NarrativeMachineYamahaDD5::addMotor(int mot)
@@ -55,26 +49,26 @@ int NarrativeMachineYamahaDD5::addMotor(int mot)
   int r = dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)mot);
   if( r == DYNAMIXEL_CMD_OK ){ r=0; }
   else{ 
-    if(do_debut) printf("%s ERROR - Add Motor\n", DD5_HEADER); 
+    if(do_debug) printf("%s ERROR - Add Motor\n", DD5_HEADER); 
     return DD5_FAIL; 
   }
   return DD5_OK;
 }
 
-int NarrativeMachineYamahaDD5::calibrate(mot_def_t *data, int mot)
+int NarrativeMachineYamahaDD5::calibrate(int mot)
 {
-    double dir      = data->mot[mot].dir;
-    double pos_up   = data->mot[mot].pos_up;
-    double pos_down = data->mot[mot].pos_down;
-    double vel      = data->mot[mot].vel;
-    double tor      = data->mot[mot].tor;
+    double dir      = this->mot_calibrate.mot[mot].dir;
+    double pos_up   = this->mot_calibrate.mot[mot].pos_up;
+    double pos_down = this->mot_calibrate.mot[mot].pos_down;
+    double vel      = this->mot_calibrate.mot[mot].vel;
+    double tor      = this->mot_calibrate.mot[mot].tor;
 
     /* Put stick up */ 
     this->dac.stageRefPos(mot,     pos_up * dir);
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);
     this->dac.postRef();
-    printf("Putting sticks up");
+    printf("Putting sticks up\n");
     this->dac.sleep(5.0);
 
     /* Put stick down */ 
@@ -82,7 +76,7 @@ int NarrativeMachineYamahaDD5::calibrate(mot_def_t *data, int mot)
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);
     this->dac.postRef();
-    printf("Putting sticks up");
+    printf("Putting sticks down\n");
     this->dac.sleep(5.0);
 
     /* Get State */
@@ -90,35 +84,44 @@ int NarrativeMachineYamahaDD5::calibrate(mot_def_t *data, int mot)
     double ref = this->dac.dynamixel_state.motor_ref[mot].pos;
     double pos = this->dac.dynamixel_state.motor_state[mot].pos;
     double t   = this->dac.time();
+    this->mot_calibrate.mot[mot].pos_down = pos * this->mot_calibrate.mot[mot].ratio;
     printf("t %f id %d ref %f pos %f\n", t, mot, ref, pos);
     
     return DD5_OK;
 }
 
-int NarrativeMachineYamahaDD5::on()
-{
-  return this->on(true);
-}
-
-int NarrativeMachineYamahaDD5::on( bool low-latency )
+int NarrativeMachineYamahaDD5::on(int mot)
 {
   /* Turn On System */
-  r = this->dac.cmd(DYNAMIXEL_CMD_ON, true);
+  int r = this->dac.cmd(DYNAMIXEL_CMD_ON, (int16_t)mot);
   if( r == DYNAMIXEL_CMD_OK ){ r=0; }
   else{ 
-    if(do_debut) printf("%s ERROR - On\n", DD5_HEADER); 
+    if(do_debug) printf("%s ERROR - On\n", DD5_HEADER); 
     return DD5_FAIL; 
   }
+  return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::on()
+{
+  /* Turn On System */
+  int r = this->dac.cmd(DYNAMIXEL_CMD_ON);
+  if( r == DYNAMIXEL_CMD_OK ){ r=0; }
+  else{ 
+    if(do_debug) printf("%s ERROR - On\n", DD5_HEADER); 
+    return DD5_FAIL; 
+  }
+
   return DD5_OK;
 }
 
 int NarrativeMachineYamahaDD5::off()
 {
   /* Turn On System */
-  r = this->dac.cmd(DYNAMIXEL_CMD_OFF);
+  int r = this->dac.cmd(DYNAMIXEL_CMD_OFF);
   if( r == DYNAMIXEL_CMD_OK ){ r=0; }
   else{ 
-    if(do_debut) printf("%s ERROR - Off\n", DD5_HEADER); 
+    if(do_debug) printf("%s ERROR - Off\n", DD5_HEADER); 
     return DD5_FAIL; 
   }
   return DD5_OK;
