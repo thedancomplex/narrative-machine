@@ -41,7 +41,8 @@ int main()
   r = dac.cmd(DYNAMIXEL_CMD_ON, true);
   if( r == DYNAMIXEL_CMD_OK ){ r=0; }
   else{ printf("1\n"); return 1; }
-
+  
+  dac.sleep(2.0);
 
   /* Add ID */
   r = dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)MOT_ID_LEFT);

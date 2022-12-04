@@ -29,6 +29,7 @@ int main()
 
   /* Turn On System */
   r = dd5.on();
+  dd5.sleep(1.0);
 
   /* Calibrate */
   printf("Calibrate %d and %d\n", MOT_ID_STICK_0, MOT_ID_STICK_1);
@@ -36,12 +37,12 @@ int main()
   r = dd5.calibrate(MOT_ID_STICK_1);
 
 
-  for (int i = 0; i < 200; i++)
+  for (int i = 0; i < 20; i++)
   {
     dd5.hit(MOT_ID_STICK_0);
-//    dd5.sleep(0.01);
+    dd5.sleep(0.05);
     dd5.hit(MOT_ID_STICK_1);
-//    dd5.sleep(0.01);
+    dd5.sleep(0.05);
   }
 
 

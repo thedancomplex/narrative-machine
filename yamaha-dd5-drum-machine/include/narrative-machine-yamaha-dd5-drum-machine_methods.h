@@ -73,7 +73,7 @@ int NarrativeMachineYamahaDD5::calibrate(int mot)
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);
     this->dac.postRef();
-    printf("Putting sticks up\n");
+    printf("Putting stick %d up\n", mot);
     this->dac.sleep(5.0);
 
     /* Put stick down */ 
@@ -81,7 +81,7 @@ int NarrativeMachineYamahaDD5::calibrate(int mot)
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);
     this->dac.postRef();
-    printf("Putting sticks down\n");
+    printf("Putting stick %d down\n", mot);
     this->dac.sleep(5.0);
 
     /* Get State */
