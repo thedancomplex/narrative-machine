@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define MOT_ID_LEFT  4
+#define MOT_ID_LEFT  5
 #define MOT_ID_RIGHT 3
 #define MOT_VEL      100.0
 #define MOT_TOR      0.3

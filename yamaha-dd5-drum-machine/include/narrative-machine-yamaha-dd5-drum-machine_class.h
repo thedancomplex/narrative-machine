@@ -10,7 +10,7 @@ class NarrativeMachineYamahaDD5
 {
   #define DD5_MOT_NUM 254
   #define DD5_HEADER "DD5: "
-  #define MOT_ID_STICK_0          4
+  #define MOT_ID_STICK_0          5
   #define MOT_ID_STICK_1          3 
   #define MOT_VEL                 100.0
   #define MOT_TOR                 0.3
@@ -18,7 +18,9 @@ class NarrativeMachineYamahaDD5
   #define MOT_TOR_CALIBRATE       0.15
   #define MOT_POS_UP_CALIBRATE   -0.2
   #define MOT_POS_DOWN_CALIBRATE  0.2
-  #define MOT_HIT_RATIO           1.1
+  #define MOT_HIT_OFFSET_UP       0.05
+  #define MOT_HIT_OFFSET_DOWN     0.05
+  #define MOT_HIT_TIME            0.04
 
   enum{
     DD5_OK   = 0,
@@ -31,7 +33,8 @@ class NarrativeMachineYamahaDD5
     double tor;
     double vel;
     double dir;
-    double ratio;
+    double offset_down;
+    double offset_up;
   }__attribute__((packed)) mot_info_def_t;
 
   typedef struct mot_def {
@@ -50,6 +53,12 @@ class NarrativeMachineYamahaDD5
 
     /* Calibrate Motor */
     int calibrate(int mot);
+
+    /* Hit */
+    int hit(int mot);
+
+    /* Sleep */
+    int sleep(double val);
 
   private:
     mot_def_t mot_calibrate;
