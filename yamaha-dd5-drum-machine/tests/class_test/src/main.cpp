@@ -36,12 +36,12 @@ int main()
   r = dd5.calibrate(MOT_ID_STICK_1);
 
 
-  for (int i = 0; i < 20; i++)
+  for (int i = 0; i < 200; i++)
   {
     dd5.hit(MOT_ID_STICK_0);
-    dd5.sleep(0.01);
+//    dd5.sleep(0.01);
     dd5.hit(MOT_ID_STICK_1);
-    dd5.sleep(0.01);
+//    dd5.sleep(0.01);
   }
 
 
