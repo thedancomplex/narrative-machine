@@ -49,9 +49,16 @@ NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
   this->addMotor(MOT_ID_STICK_1);
 }
 
+
+int NarrativeMachineYamahaDD5::add(int mot)
+{
+  return this->addMotor(mot);
+}
+
 int NarrativeMachineYamahaDD5::addMotor(int mot)
 {
-  int r = dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)mot);
+  int r = this->dac.cmd(DYNAMIXEL_CMD_ID_ADD, (int16_t)mot);
+  printf("Add Motor id: %d\n",(int16_t)mot);
   if( r == DYNAMIXEL_CMD_OK ){ r=0; }
   else{ 
     if(do_debug) printf("%s ERROR - Add Motor\n", DD5_HEADER); 
@@ -85,7 +92,7 @@ int NarrativeMachineYamahaDD5::calibrate(int mot)
     this->dac.sleep(5.0);
 
     /* Get State */
-    dac.getState();
+    this->dac.getState();
     double ref = this->dac.dynamixel_state.motor_ref[mot].pos;
     double pos = this->dac.dynamixel_state.motor_state[mot].pos;
     double t   = this->dac.time();
@@ -165,7 +172,7 @@ int NarrativeMachineYamahaDD5::hit(int mot)
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);
     this->dac.postRef();
-    dac.sleep(MOT_HIT_TIME);
+    this->dac.sleep(MOT_HIT_TIME);
     this->dac.stageRefPos(mot,     pos_up * dir);
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);

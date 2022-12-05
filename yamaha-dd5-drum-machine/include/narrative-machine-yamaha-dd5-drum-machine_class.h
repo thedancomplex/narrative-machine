@@ -60,6 +60,9 @@ class NarrativeMachineYamahaDD5
     /* Sleep */
     int sleep(double val);
 
+    /* Add motor */
+    int add(int mot);
+
   private:
     mot_def_t mot_calibrate;
     DynamixelAchClient dac = DynamixelAchClient();
