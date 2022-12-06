@@ -31,15 +31,13 @@ int main()
   r = dd5.on();
   dd5.sleep(1.0);
 
-  dd5.add(MOT_ID_STICK_0);
-  dd5.add(MOT_ID_STICK_1);
-  dd5.add(MOT_ID_STICK_0);
-  dd5.add(MOT_ID_STICK_1);
-  dd5.add(MOT_ID_STICK_0);
-  dd5.add(MOT_ID_STICK_1);
-  dd5.add(MOT_ID_STICK_0);
-  dd5.add(MOT_ID_STICK_1);
-
+  for(int i = 0; i < 10; i++)
+  {
+    printf("%d\n",i);
+    dd5.add(MOT_ID_STICK_0);
+    dd5.add(MOT_ID_STICK_1);
+    dd5.sleep(1.0);
+  }
   dd5.sleep(1.0);
 
   /* Turn Off System */
