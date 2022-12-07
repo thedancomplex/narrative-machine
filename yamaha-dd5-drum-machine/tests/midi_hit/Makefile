@@ -1,6 +1,6 @@
 default: all
 
-CFLAGS := -Wall -D__LINUX_ALSA__ -I./include
+CFLAGS := -Wall -D__LINUX_ALSA__ -I./include -I../include -I../../include -I/etc/dynamixel-ach/include/
 CC := g++
 
 BINARIES := main
