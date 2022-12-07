@@ -130,6 +130,11 @@ int NarrativeMachineYamahaDD5::calibrate(int mot)
     this->mot_calibrate.mot[mot].tor      = MOT_TOR;
     this->mot_calibrate.mot[mot].vel      = MOT_VEL;
 
+    this->dac.stageRefPos(mot,     this->mot_calibrate.mot[mot].pos_up * dir);
+    this->dac.stageRefVel(mot,     this->mot_calibrate.mot[mot].tor);
+    this->dac.stageRefTorque(mot,  this->mot_calibrate.mot[mot].vel);
+    this->dac.postRef();
+
     printf("t %f id %d ref %f pos %f\n", t, mot, ref, pos);
     
     return DD5_OK;
