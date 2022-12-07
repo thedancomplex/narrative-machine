@@ -5,6 +5,7 @@
 #include <narrative-machine-yamaha-dd5-drum-machine.h>
 #include <unistd.h>
 #include <string.h>
+#include <thread>
 
 /* Make Midi Object */
 RtMidiIn *midiin = new RtMidiIn();
@@ -19,6 +20,8 @@ int  setup();
 int  setup(int midi_port);
 int  cleanup();
 int  wait_for_exit();
+int  set_update_loop();
+int  run_loop(int the_loop);
 
 void mycallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
@@ -26,7 +29,24 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
   for ( unsigned int i=0; i<nBytes; i++ )
     std::cout << "Byte " << i << " = " << (int)message->at(i) << ", ";
   if ( nBytes > 0 )
-    std::cout << "stamp = " << deltatime << std::endl;
+    {
+      std::cout << "stamp = " << deltatime << std::endl;
+      dd5.hit(MOT_ID_STICK_0);
+      dd5.hit(MOT_ID_STICK_1);
+    }
+}
+
+int run_loop(int the_loop)
+{
+  dd5.loop();
+  return 0;
+}
+
+int set_update_loop()
+{
+  std::thread th1(run_loop, 0);
+  th1.detach();
+  return 0;
 }
 
 int setup()
@@ -95,6 +115,7 @@ int cleanup()
 int main()
 {
   setup();
+  set_update_loop();
 
   wait_for_exit();
   cleanup();

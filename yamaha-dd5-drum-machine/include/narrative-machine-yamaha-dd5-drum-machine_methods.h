@@ -26,6 +26,9 @@
 NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
 {
   memset(&this->mot_calibrate, 0, sizeof(mot_calibrate));
+  memset(&this->stick_hit, 0, sizeof(stick_hit));
+  memset(&this->stick_hit_tracking, 0, sizeof(stick_hit_tracking));
+  
   for(int i = 0; i < DD5_MOT_NUM; i++)
   {
     this->mot_calibrate.mot[i].dir         = 1.0;
@@ -38,6 +41,10 @@ NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
     this->dac.stageRefPos(    i, 0.0);
     this->dac.stageRefVel(    i, 0.0);
     this->dac.stageRefTorque( i, 0.0);
+
+    this->stick_hit_tracking.stick[i].in_hit = false;
+    this->stick_hit_tracking.stick[i].in_hit_previous = false;
+    this->stick_hit_tracking.stick[i].do_hit = false;
   }
   this->dac.postRef();
 
@@ -47,8 +54,24 @@ NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
   /* Add Motors */
   this->addMotor(MOT_ID_STICK_0);
   this->addMotor(MOT_ID_STICK_1);
+
+  this->dac.rate(DEFAULT_RATE);
 }
 
+
+int NarrativeMachineYamahaDD5::loop()
+{
+  bool do_loop = true;
+  while(do_loop)
+  {
+    for( int i = 0; i < DD5_MOT_NUM; i++ )
+    { 
+      this->hit_loop(i);
+    } 
+    dac.sleep();
+  }
+  return DD5_OK;
+}
 
 int NarrativeMachineYamahaDD5::add(int mot)
 {
@@ -158,7 +181,7 @@ int NarrativeMachineYamahaDD5::sleep(double val)
   return this->dac.sleep(val);
 }
 
-int NarrativeMachineYamahaDD5::hit(int mot)
+int NarrativeMachineYamahaDD5::hit_blocking(int mot)
 {
     if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
 
@@ -177,6 +200,70 @@ int NarrativeMachineYamahaDD5::hit(int mot)
     this->dac.stageRefVel(mot,     vel);
     this->dac.stageRefTorque(mot,  tor);
     this->dac.postRef();
+  
+    return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::hit(int mot)
+{
+  if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+
+  this->stick_hit_tracking.stick[mot].do_hit = true;
+
+  return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::hit_loop(int mot)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+
+    double dir      = this->mot_calibrate.mot[mot].dir;
+    double pos_up   = this->mot_calibrate.mot[mot].pos_up;
+    double pos_down = this->mot_calibrate.mot[mot].pos_down;
+    double vel      = this->mot_calibrate.mot[mot].vel;
+    double tor      = this->mot_calibrate.mot[mot].tor;
+
+    this->stick_hit_tracking.stick[mot].in_hit = true;
+    bool in_hit          = this->stick_hit_tracking.stick[mot].in_hit;
+    bool in_hit_previous = this->stick_hit_tracking.stick[mot].in_hit_previous;
+    bool do_hit          = this->stick_hit_tracking.stick[mot].do_hit;
+    
+    double time = this->dac.time();
+
+    if( (in_hit == true) && (in_hit_previous == false) && (do_hit == true) )
+    {
+      this->dac.stageRefPos(mot,     pos_down * dir);
+      this->dac.stageRefVel(mot,     vel);
+      this->dac.stageRefTorque(mot,  tor);
+      this->dac.postRef();
+      this->stick_hit_tracking.stick[mot].in_hit_previous = true;
+      this->stick_hit_tracking.stick[mot].t = time;
+      this->stick_hit_tracking.stick[mot].do_hit = false;
+    }
+    else if( (in_hit == true) && (in_hit_previous == true) )
+    {
+      double time0 = this->stick_hit_tracking.stick[mot].t;
+      double dt = time - time0;
+      if(dt > MOT_HIT_TIME)
+      {
+        this->dac.stageRefPos(mot,     pos_up * dir);
+        this->dac.stageRefVel(mot,     vel);
+        this->dac.stageRefTorque(mot,  tor);
+        this->dac.postRef();
+        this->stick_hit_tracking.stick[mot].in_hit          = false;
+        this->stick_hit_tracking.stick[mot].in_hit_previous = false;
+        this->stick_hit_tracking.stick[mot].do_hit = false;
+      }
+      this->stick_hit_tracking.stick[mot].dt = dt;
+    }
+    else if (do_hit == true)
+    {
+      this->stick_hit_tracking.stick[mot].do_hit = false;
+    }
+    else
+    {
+      return DD5_FAIL;
+    }
   
     return DD5_OK;
 }

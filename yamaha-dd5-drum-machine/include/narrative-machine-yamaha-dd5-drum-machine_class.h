@@ -21,10 +21,14 @@ class NarrativeMachineYamahaDD5
   #define MOT_HIT_OFFSET_UP       0.05
   #define MOT_HIT_OFFSET_DOWN     0.05
   #define MOT_HIT_TIME            0.04
+  #define DEFAULT_RATE            250.0
 
   enum{
     DD5_OK   = 0,
-    DD5_FAIL = 1
+    DD5_FAIL = 1,
+    DD5_STICK_UP = 2,
+    DD5_STICK_DOWN = 3,
+    DD5_ENUM_COUNT
   }__attribute__((packed)) dd5_enum_t;
 
   typedef struct mot_info_def {
@@ -41,6 +45,37 @@ class NarrativeMachineYamahaDD5
     mot_info_def_t mot[DD5_MOT_NUM];
   }__attribute__((packed)) mot_def_t;
 
+  typedef struct midi_def {
+    int16_t message;
+    int16_t status;
+    int16_t data0;
+    int16_t data1;
+  }__attribute__((packed)) midi_def_t;
+
+  typedef struct stick_def {
+    int16_t stick;
+    double dt;
+    double velocity;
+    double force;
+  }__attribute__((packed)) stick_def_t;
+
+  typedef struct hit_def {
+    midi_def_t midi;
+    stick_def_t stick;
+  }__attribute__((packed)) hit_def_t;
+
+  typedef struct hit_tracking_stick_def {
+    bool do_hit;
+    bool in_hit;
+    bool in_hit_previous;
+    double dt;
+    double t;
+  }__attribute__((packed)) hit_tracking_stick_def_t;
+
+  typedef struct hit_tracking_def {
+    hit_tracking_stick_def_t stick[DD5_MOT_NUM];
+  }__attribute__((packed)) hit_tracking_def_t;
+
   public:
     NarrativeMachineYamahaDD5();
 
@@ -56,6 +91,8 @@ class NarrativeMachineYamahaDD5
 
     /* Hit */
     int hit(int mot);
+    int hit_loop(int mot);
+    int hit_blocking(int mot);
 
     /* Sleep */
     int sleep(double val);
@@ -63,9 +100,15 @@ class NarrativeMachineYamahaDD5
     /* Add motor */
     int add(int mot);
 
+    /* Update Loop */
+    int loop();
+
   private:
     mot_def_t mot_calibrate;
+    hit_def_t stick_hit;
+    hit_tracking_def_t stick_hit_tracking;
     DynamixelAchClient dac = DynamixelAchClient();
+    
     int addMotor(int mot);
 
     bool do_debug = true;
