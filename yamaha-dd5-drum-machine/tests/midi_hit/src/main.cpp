@@ -26,11 +26,28 @@ int  run_loop(int the_loop);
 void mycallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
   unsigned int nBytes = message->size();
+  unsigned char status = 0;
+  unsigned char data0  = 0;
+  unsigned char data1  = 0;
+
+  unsigned char chan   = 0;
+  unsigned char mode   = 0;
+
   for ( unsigned int i=0; i<nBytes; i++ )
-    std::cout << "Byte " << i << " = " << (int)message->at(i) << ", ";
+  {
+    std::cout << "nBytes = "<< nBytes << " Byte " << i << " = " << (int)message->at(i) << ", ";
+    if      ( i == 0 ) status = message->at(0);
+    else if ( i == 1 ) data0  = message->at(1);
+    else if ( i == 2 ) data1  = message->at(2);
+  }
+
+  mode = (status & 0b01110000) >> 4;
+  chan = (status & 0b00001111) >> 0;
+
+
   if ( nBytes > 0 )
     {
-      std::cout << "stamp = " << deltatime << std::endl;
+      std::cout << " chan = " << (int)chan << " stamp = " << deltatime << std::endl;
       dd5.hit(MOT_ID_STICK_0);
       dd5.hit(MOT_ID_STICK_1);
     }
