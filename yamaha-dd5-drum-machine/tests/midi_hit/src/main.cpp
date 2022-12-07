@@ -7,6 +7,10 @@
 #include <string.h>
 #include <thread>
 
+#define NOTE_ON 25
+
+
+
 /* Make Midi Object */
 RtMidiIn *midiin = new RtMidiIn();
 
@@ -35,22 +39,31 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
 
   for ( unsigned int i=0; i<nBytes; i++ )
   {
-    std::cout << "nBytes = "<< nBytes << " Byte " << i << " = " << (int)message->at(i) << ", ";
     if      ( i == 0 ) status = message->at(0);
     else if ( i == 1 ) data0  = message->at(1);
     else if ( i == 2 ) data1  = message->at(2);
+    std::cout << "s0: " << (int)status << " d0: " << (int)data0 << " d1: " << (int)data1 << " ";
+    std::cout << "nBytes = "<< nBytes << " Byte " << i << " = " << (int)message->at(i) << ", ";
   }
 
   mode = (status & 0b01110000) >> 4;
   chan = (status & 0b00001111) >> 0;
+  chan += 1;
 
+  status = status & 0b01111111;
 
+  int the_hit = 0;
   if ( nBytes > 0 )
     {
-      std::cout << " chan = " << (int)chan << " stamp = " << deltatime << std::endl;
-      dd5.hit(MOT_ID_STICK_0);
-      dd5.hit(MOT_ID_STICK_1);
+        std::cout << " status = " << (int)status << " mode = " << (int)mode << " chan = " << (int)chan << " stamp = " << deltatime;
+      if( (int)status == (int)NOTE_ON )
+      {
+        the_hit = 1;
+        dd5.hit(MOT_ID_STICK_0);
+//        dd5.hit(MOT_ID_STICK_1);
+      }
     }
+    std::cout << " hit = " << the_hit << std::endl;
 }
 
 int run_loop(int the_loop)
@@ -131,7 +144,7 @@ int cleanup()
 
 int main()
 {
-  setup();
+  setup(0);
   set_update_loop();
 
   wait_for_exit();
