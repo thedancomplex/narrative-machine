@@ -13,7 +13,7 @@ class NarrativeMachineYamahaDD5
   #define MOT_ID_STICK_0          5
   #define MOT_ID_STICK_1          3 
   #define MOT_VEL                 100.0
-  #define MOT_TOR                 0.3
+  #define MOT_TOR                 0.4
   #define MOT_VEL_CALIBRATE       0.5
   #define MOT_TOR_CALIBRATE       0.15
   #define MOT_POS_UP_CALIBRATE   -0.2
