@@ -59,7 +59,8 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
       if( (int)status == (int)NOTE_ON )
       {
         the_hit = 1;
-        dd5.hit(MOT_ID_STICK_0);
+        if( (int)data0 == 36 ) dd5.hit(MOT_ID_STICK_0);
+        if( (int)data0 == 37 ) dd5.hit(MOT_ID_STICK_1);
 //        dd5.hit(MOT_ID_STICK_1);
       }
     }
