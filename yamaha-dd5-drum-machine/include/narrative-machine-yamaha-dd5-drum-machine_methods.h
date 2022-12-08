@@ -54,6 +54,8 @@ NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
   /* Add Motors */
   this->addMotor(MOT_ID_STICK_0);
   this->addMotor(MOT_ID_STICK_1);
+  this->addMotor(MOT_ID_STICK_2);
+  this->addMotor(MOT_ID_STICK_3);
 
   this->dac.rate(DEFAULT_RATE);
 }

@@ -12,6 +12,8 @@ class NarrativeMachineYamahaDD5
   #define DD5_HEADER "DD5: "
   #define MOT_ID_STICK_0          5
   #define MOT_ID_STICK_1          3 
+  #define MOT_ID_STICK_2          4 
+  #define MOT_ID_STICK_3          6 
   #define MOT_VEL                 100.0
   #define MOT_TOR                 0.4
   #define MOT_VEL_CALIBRATE       0.5

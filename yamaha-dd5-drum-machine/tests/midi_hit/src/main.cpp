@@ -61,6 +61,8 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
         the_hit = 1;
         if( (int)data0 == 36 ) dd5.hit(MOT_ID_STICK_0);
         if( (int)data0 == 37 ) dd5.hit(MOT_ID_STICK_1);
+        if( (int)data0 == 38 ) dd5.hit(MOT_ID_STICK_2);
+        if( (int)data0 == 39 ) dd5.hit(MOT_ID_STICK_3);
 //        dd5.hit(MOT_ID_STICK_1);
       }
     }
@@ -110,6 +112,8 @@ int setup(int midi_port)
   printf("Calibrate %d and %d\n", MOT_ID_STICK_0, MOT_ID_STICK_1);
   r = dd5.calibrate(MOT_ID_STICK_0);
   r = dd5.calibrate(MOT_ID_STICK_1);
+  r = dd5.calibrate(MOT_ID_STICK_2);
+  r = dd5.calibrate(MOT_ID_STICK_3);
 
   printf("DD5 Calibrated\n");
 
