@@ -57,6 +57,11 @@ NarrativeMachineYamahaDD5::NarrativeMachineYamahaDD5()
   this->addMotor(MOT_ID_STICK_2);
   this->addMotor(MOT_ID_STICK_3);
 
+  this->setDir(MOT_ID_STICK_0,  1);
+  this->setDir(MOT_ID_STICK_1,  1);
+  this->setDir(MOT_ID_STICK_2, -1);
+  this->setDir(MOT_ID_STICK_3, -1);
+
   this->dac.rate(DEFAULT_RATE);
 }
 
@@ -92,6 +97,22 @@ int NarrativeMachineYamahaDD5::addMotor(int mot)
   return DD5_OK;
 }
 
+int NarrativeMachineYamahaDD5::setDir(int mot, int dir)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+
+    double dir_mult = 1.0;
+    int ret = DD5_OK;
+    if( dir >= 1) dir_mult = 1.0;
+    else if( dir <=-1 ) dir_mult = -1.0;
+    else dir_mult = -1.0;
+
+    if ( (dir != 1) | (dir != -1) ) ret = DD5_FAIL;
+
+    this->mot_calibrate.mot[mot].dir = dir_mult;
+
+    return ret;
+}
 int NarrativeMachineYamahaDD5::calibrate(int mot)
 {
     double dir      = this->mot_calibrate.mot[mot].dir;
@@ -132,7 +153,8 @@ int NarrativeMachineYamahaDD5::calibrate(int mot)
     this->mot_calibrate.mot[mot].tor      = MOT_TOR;
     this->mot_calibrate.mot[mot].vel      = MOT_VEL;
 
-    this->dac.stageRefPos(mot,     this->mot_calibrate.mot[mot].pos_up * dir);
+    //this->dac.stageRefPos(mot,     this->mot_calibrate.mot[mot].pos_up * dir);
+    this->dac.stageRefPos(mot,     this->mot_calibrate.mot[mot].pos_up);
     this->dac.stageRefVel(mot,     this->mot_calibrate.mot[mot].tor);
     this->dac.stageRefTorque(mot,  this->mot_calibrate.mot[mot].vel);
     this->dac.postRef();
@@ -239,7 +261,8 @@ int NarrativeMachineYamahaDD5::hit_loop(int mot)
 
     if( (in_hit == true) && (in_hit_previous == false) && (do_hit == true) )
     {
-      this->dac.stageRefPos(mot,     pos_down * dir);
+      //this->dac.stageRefPos(mot,     pos_down * dir);
+      this->dac.stageRefPos(mot,     pos_down);
       this->dac.stageRefVel(mot,     vel);
       this->dac.stageRefTorque(mot,  tor);
       this->dac.postRef();
@@ -253,7 +276,8 @@ int NarrativeMachineYamahaDD5::hit_loop(int mot)
       double dt = time - time0;
       if(dt > MOT_HIT_TIME)
       {
-        this->dac.stageRefPos(mot,     pos_up * dir);
+        //this->dac.stageRefPos(mot,     pos_up * dir);
+        this->dac.stageRefPos(mot,     pos_up);
         this->dac.stageRefVel(mot,     vel);
         this->dac.stageRefTorque(mot,  tor);
         this->dac.postRef();

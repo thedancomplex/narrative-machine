@@ -99,6 +99,9 @@ class NarrativeMachineYamahaDD5
     /* Sleep */
     int sleep(double val);
 
+    /* Set Direction */
+    int setDir(int mot, int dir);
+
     /* Add motor */
     int add(int mot);
 
