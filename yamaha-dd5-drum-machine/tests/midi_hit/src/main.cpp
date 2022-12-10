@@ -57,10 +57,10 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
       if( (int)status == (int)NOTE_ON )
       {
         the_hit = 1;
-        if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT   ) dd5.hit(MOT_DRUM_HIGH_HAT);
-        if( (int)data0 == MOT_MIDI_CHAN_KICK       ) dd5.hit(MOT_DRUM_KICK);
-        if( (int)data0 == MOT_MIDI_CHAN_SNAIR      ) dd5.hit(MOT_DRUM_SNAIR);
-        if( (int)data0 == MOT_MIDI_CHAN_SNAIR_HIGH ) dd5.hit(MOT_DRUM_SNAIR_HIGH);
+        if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT ) dd5.hit(MOT_DRUM_HIGH_HAT);
+        if( (int)data0 == MOT_MIDI_CHAN_KICK     ) dd5.hit(MOT_DRUM_KICK);
+        if( (int)data0 == MOT_MIDI_CHAN_SNAIR    ) dd5.hit(MOT_DRUM_SNAIR);
+        if( (int)data0 == MOT_MIDI_CHAN_CLAP     ) dd5.hit(MOT_DRUM_CLAP);
       }
     }
     std::cout << " hit = " << the_hit << std::endl;

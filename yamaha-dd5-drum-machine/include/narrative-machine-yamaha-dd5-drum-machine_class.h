@@ -17,11 +17,11 @@ class NarrativeMachineYamahaDD5
   #define MOT_DRUM_HIGH_HAT       MOT_ID_STICK_0
   #define MOT_DRUM_KICK           MOT_ID_STICK_1
   #define MOT_DRUM_SNAIR          MOT_ID_STICK_2
-  #define MOT_DRUM_SNAIR_HIGH     MOT_ID_STICK_3
+  #define MOT_DRUM_CLAP           MOT_ID_STICK_3
   #define MOT_MIDI_CHAN_HIGH_HAT    44
   #define MOT_MIDI_CHAN_KICK        36
   #define MOT_MIDI_CHAN_SNAIR       38
-  #define MOT_MIDI_CHAN_SNAIR_HIGH  39   
+  #define MOT_MIDI_CHAN_CLAP        39   
   #define MOT_VEL                 100.0
   #define MOT_TOR                 0.4
   #define MOT_VEL_CALIBRATE       0.5
