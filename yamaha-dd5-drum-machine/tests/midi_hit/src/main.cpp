@@ -9,8 +9,6 @@
 
 #define NOTE_ON 25
 
-
-
 /* Make Midi Object */
 RtMidiIn *midiin = new RtMidiIn();
 
@@ -63,7 +61,6 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
         if( (int)data0 == 37 ) dd5.hit(MOT_ID_STICK_1);
         if( (int)data0 == 38 ) dd5.hit(MOT_ID_STICK_2);
         if( (int)data0 == 39 ) dd5.hit(MOT_ID_STICK_3);
-//        dd5.hit(MOT_ID_STICK_1);
       }
     }
     std::cout << " hit = " << the_hit << std::endl;
