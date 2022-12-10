@@ -57,13 +57,23 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
       if( (int)status == (int)NOTE_ON )
       {
         the_hit = 1;
-        if( (int)data0 == 36 ) dd5.hit(MOT_ID_STICK_0);
-        if( (int)data0 == 37 ) dd5.hit(MOT_ID_STICK_1);
-        if( (int)data0 == 38 ) dd5.hit(MOT_ID_STICK_2);
-        if( (int)data0 == 39 ) dd5.hit(MOT_ID_STICK_3);
+        if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT   ) dd5.hit(MOT_DRUM_HIGH_HAT);
+        if( (int)data0 == MOT_MIDI_CHAN_KICK       ) dd5.hit(MOT_DRUM_KICK);
+        if( (int)data0 == MOT_MIDI_CHAN_SNAIR      ) dd5.hit(MOT_DRUM_SNAIR);
+        if( (int)data0 == MOT_MIDI_CHAN_SNAIR_HIGH ) dd5.hit(MOT_DRUM_SNAIR_HIGH);
       }
     }
     std::cout << " hit = " << the_hit << std::endl;
+
+  #define MOT_DRUM_HIGH_HAT       MOT_ID_STICK_0
+  #define MOT_DRUM_KICK           MOT_ID_STICK_1
+  #define MOT_DRUM_SNAIR          MOT_ID_STICK_2
+  #define MOT_DRUM_SNAIR_HIGH     MOT_ID_STICK_3
+  #define MOT_MIDI_CHAN_HIGH_HAT    44
+  #define MOT_MIDI_CHAN_KICK        36
+  #define MOT_MIDI_CHAN_SNAIR       38
+  #define MOT_MIDI_CHAN_SNAIR_HIGH  39  
+
 }
 
 int run_loop(int the_loop)
