@@ -40,8 +40,8 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
     if      ( i == 0 ) status = message->at(0);
     else if ( i == 1 ) data0  = message->at(1);
     else if ( i == 2 ) data1  = message->at(2);
-    std::cout << "s0: " << (int)status << " d0: " << (int)data0 << " d1: " << (int)data1 << " ";
-    std::cout << "nBytes = "<< nBytes << " Byte " << i << " = " << (int)message->at(i) << ", ";
+//    std::cout << "s0: " << (int)status << " d0: " << (int)data0 << " d1: " << (int)data1 << " ";
+//    std::cout << "nBytes = "<< nBytes << " Byte " << i << " = " << (int)message->at(i) << ", ";
   }
 
   mode = (status & 0b01110000) >> 4;
@@ -53,26 +53,18 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
   int the_hit = 0;
   if ( nBytes > 0 )
     {
-        std::cout << " status = " << (int)status << " mode = " << (int)mode << " chan = " << (int)chan << " stamp = " << deltatime;
+//        std::cout << " status = " << (int)status << " mode = " << (int)mode << " chan = " << (int)chan << " stamp = " << deltatime;
       if( (int)status == (int)NOTE_ON )
       {
         the_hit = 1;
         if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT ) dd5.hit(MOT_DRUM_HIGH_HAT);
         if( (int)data0 == MOT_MIDI_CHAN_KICK     ) dd5.hit(MOT_DRUM_KICK);
         if( (int)data0 == MOT_MIDI_CHAN_SNAIR    ) dd5.hit(MOT_DRUM_SNAIR);
-        if( (int)data0 == MOT_MIDI_CHAN_CLAP     ) dd5.hit(MOT_DRUM_CLAP);
+        if( (int)data0 == MOT_MIDI_CHAN_TOM      ) dd5.hit(MOT_DRUM_TOM);
       }
     }
-    std::cout << " hit = " << the_hit << std::endl;
-
-  #define MOT_DRUM_HIGH_HAT       MOT_ID_STICK_0
-  #define MOT_DRUM_KICK           MOT_ID_STICK_1
-  #define MOT_DRUM_SNAIR          MOT_ID_STICK_2
-  #define MOT_DRUM_SNAIR_HIGH     MOT_ID_STICK_3
-  #define MOT_MIDI_CHAN_HIGH_HAT    44
-  #define MOT_MIDI_CHAN_KICK        36
-  #define MOT_MIDI_CHAN_SNAIR       38
-  #define MOT_MIDI_CHAN_SNAIR_HIGH  39  
+//    std::cout << " hit = " << the_hit << std::endl;
+  printf("data0 = %d\n", (int)data0);
 
 }
 

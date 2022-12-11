@@ -10,20 +10,23 @@ class NarrativeMachineYamahaDD5
 {
   #define DD5_MOT_NUM 254
   #define DD5_HEADER "DD5: "
+  #define MOT_ID_NONE             -1
   #define MOT_ID_STICK_0          5
   #define MOT_ID_STICK_1          3 
   #define MOT_ID_STICK_2          4 
   #define MOT_ID_STICK_3          6
   #define MOT_DRUM_HIGH_HAT       MOT_ID_STICK_0
-  #define MOT_DRUM_KICK           MOT_ID_STICK_1
-  #define MOT_DRUM_SNAIR          MOT_ID_STICK_2
-  #define MOT_DRUM_CLAP           MOT_ID_STICK_3
+  #define MOT_DRUM_KICK           MOT_ID_STICK_2
+  #define MOT_DRUM_SNAIR          MOT_ID_STICK_1
+  #define MOT_DRUM_TOM            MOT_ID_STICK_3
+  #define MOT_DRUM_CLAP           MOT_ID_NONE
   #define MOT_MIDI_CHAN_HIGH_HAT    44
   #define MOT_MIDI_CHAN_KICK        36
   #define MOT_MIDI_CHAN_SNAIR       38
   #define MOT_MIDI_CHAN_CLAP        39   
+  #define MOT_MIDI_CHAN_TOM         41
   #define MOT_VEL                 100.0
-  #define MOT_TOR                 0.4
+  #define MOT_TOR                 0.5
   #define MOT_VEL_CALIBRATE       0.5
   #define MOT_TOR_CALIBRATE       0.15
   #define MOT_POS_UP_CALIBRATE   -0.2
