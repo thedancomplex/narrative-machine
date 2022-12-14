@@ -113,6 +113,55 @@ int NarrativeMachineYamahaDD5::setDir(int mot, int dir)
 
     return ret;
 }
+
+int NarrativeMachineYamahaDD5::postMot()
+{
+  this->dac.postRef();
+  return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::stageMot(int mot, double pos)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+    double vel      = this->mot_calibrate.mot[mot].vel;
+    double tor      = this->mot_calibrate.mot[mot].tor;
+    return this->stageMot(mot, pos, vel, tor);
+}
+
+int NarrativeMachineYamahaDD5::stageMot(int mot, double pos, double vel)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+    double tor      = this->mot_calibrate.mot[mot].tor;
+    return this->stageMot(mot, pos, vel, tor);
+}
+int NarrativeMachineYamahaDD5::setTor(int mot, double tor)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+    this->mot_calibrate.mot[mot].tor = tor;
+    return DD5_OK;
+}
+
+int NarrativeMachineYamahaDD5::setVel(int mot, double vel)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+    this->mot_calibrate.mot[mot].vel = vel;
+    return DD5_OK;
+}
+
+
+int NarrativeMachineYamahaDD5::stageMot(int mot, double pos, double vel, double tor)
+{
+    if( (mot < 0) | (mot > DD5_MOT_NUM) ) return DD5_FAIL;
+    double dir      = this->mot_calibrate.mot[mot].dir;
+
+    /* Put stick up */ 
+    this->dac.stageRefPos(mot,     pos * dir);
+    this->dac.stageRefVel(mot,     vel);
+    this->dac.stageRefTorque(mot,  tor);
+
+    return DD5_OK;
+}
+
 int NarrativeMachineYamahaDD5::calibrate(int mot)
 {
     double dir      = this->mot_calibrate.mot[mot].dir;

@@ -113,6 +113,20 @@ class NarrativeMachineYamahaDD5
     /* Set Direction */
     int setDir(int mot, int dir);
 
+    /* Stage Motor Ref */
+    int stageMot(int mot, double pos);
+    int stageMot(int mot, double pos, double vel);
+    int stageMot(int mot, double pos, double vel, double tor);
+
+    /* Post Motor Ref */
+    int posMot();
+
+    /* Set Motor Velocity */
+    int setVel(int mot, double vel);
+
+    /* Set Motor Torque */
+    int setTor(int mot, double tor);
+
     /* Add motor */
     int add(int mot);
 
