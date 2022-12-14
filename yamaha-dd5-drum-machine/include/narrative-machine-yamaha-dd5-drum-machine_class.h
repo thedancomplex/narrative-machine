@@ -11,6 +11,10 @@ class NarrativeMachineYamahaDD5
   #define DD5_MOT_NUM 254
   #define DD5_HEADER "DD5: "
   #define MOT_ID_NONE             -1
+  #define MOT_ID_NKY              20
+  #define MOT_ID_NKP1             21
+  #define MOT_ID_NKP2             22
+  #define MOT_ID_NKR              23
   #define MOT_ID_STICK_0          5
   #define MOT_ID_STICK_1          3 
   #define MOT_ID_STICK_2          4 
