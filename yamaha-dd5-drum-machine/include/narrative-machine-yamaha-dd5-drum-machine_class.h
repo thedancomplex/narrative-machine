@@ -119,7 +119,7 @@ class NarrativeMachineYamahaDD5
     int stageMot(int mot, double pos, double vel, double tor);
 
     /* Post Motor Ref */
-    int posMot();
+    int postMot();
 
     /* Set Motor Velocity */
     int setVel(int mot, double vel);
