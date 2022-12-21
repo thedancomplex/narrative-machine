@@ -11,10 +11,6 @@ NarrativeMachineYamahaDD5 dd5 = NarrativeMachineYamahaDD5();
 
 int setup()
 {
-
-  /* Setup DD5 */
-  int r = 0;
-
   /* Add Neck Motors */
   dd5.add(MOT_ID_NKY);
   dd5.add(MOT_ID_NKY);
