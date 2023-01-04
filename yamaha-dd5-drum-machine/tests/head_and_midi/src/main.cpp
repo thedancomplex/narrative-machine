@@ -6,8 +6,13 @@
 #include <unistd.h>
 #include <string.h>
 #include <thread>
+#include <cstdlib>
+
 
 #define NOTE_ON 25
+
+#define KICK_MAX 4
+int i_kick = 0;
 
 /* Make Midi Object */
 RtMidiIn *midiin = new RtMidiIn();
@@ -24,6 +29,7 @@ int  cleanup();
 int  wait_for_exit();
 int  set_update_loop();
 int  run_loop(int the_loop);
+int  do_rand_neck();
 
 void mycallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
@@ -57,7 +63,16 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
       if( (int)status == (int)NOTE_ON )
       {
         the_hit = 1;
-        if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT ) dd5.hit(MOT_DRUM_HIGH_HAT);
+        if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT ) 
+        { 
+          dd5.hit(MOT_DRUM_HIGH_HAT); 
+          i_kick++;
+          if(i_kick >= KICK_MAX)
+          {
+            do_rand_neck(); 
+            i_kick = 0;
+          }
+        }
         if( (int)data0 == MOT_MIDI_CHAN_KICK     ) dd5.hit(MOT_DRUM_KICK);
         if( (int)data0 == MOT_MIDI_CHAN_SNAIR    ) dd5.hit(MOT_DRUM_SNAIR);
         if( (int)data0 == MOT_MIDI_CHAN_TOM      ) dd5.hit(MOT_DRUM_TOM);
@@ -114,6 +129,13 @@ int setup(int midi_port)
   r = dd5.on();
   dd5.sleep(1.0);
 
+  return r;
+}
+
+int setup_calibrate()
+{
+
+  int r = 0;
   /* Calibrate */
   printf("Calibrate %d and %d\n", MOT_ID_STICK_0, MOT_ID_STICK_1);
   r = dd5.calibrate(MOT_ID_STICK_0);
@@ -153,12 +175,56 @@ int cleanup()
   return r;
 }
 
+
+#define HOME_NKY  0.0
+#define HOME_NKP1 0.0
+#define HOME_NKP2 0.0
+#define HOME_NKR  0.0
+
+#define DELTA_NKY  0.5
+#define DELTA_NKP1 0.5
+#define DELTA_NKP2 0.5
+#define DELTA_NKR  0.3
+
+#define RAND_REZ 10001
+
+int do_rand_neck()
+{
+ double k_pitch = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
+ double k_roll  = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
+ double k_yaw   = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
+
+ double pitch1 = HOME_NKP1 + DELTA_NKP1 * k_pitch;
+ double pitch2 = HOME_NKP2 - DELTA_NKP2 * k_pitch;
+
+ double yaw    = HOME_NKY + (DELTA_NKY * ( 1.0 - ( 2.0 * k_yaw  ) ) );
+ double roll   = HOME_NKR + (DELTA_NKR * ( 1.0 - ( 2.0 * k_roll ) ) );
+
+ dd5.stageMot(MOT_ID_NKY,  yaw);
+ dd5.stageMot(MOT_ID_NKP1, pitch1);
+ dd5.stageMot(MOT_ID_NKP2, pitch2);
+ dd5.stageMot(MOT_ID_NKR,  roll);
+ dd5.postMot();
+
+ return 0;
+}
+
 int main()
 {
-  setup(0);
-  set_update_loop();
+  int r = setup(0);
 
-  double val = 0.0;
+  double val = -0.3;
+  /* Set neck to home position */
+  dd5.stageMot(MOT_ID_NKY, val);
+  dd5.stageMot(MOT_ID_NKP1, val);
+  dd5.stageMot(MOT_ID_NKP2, val);
+  dd5.stageMot(MOT_ID_NKR, val);
+  dd5.postMot();
+
+  do_rand_neck();
+
+  setup_calibrate();
+  set_update_loop();
 
   dd5.stageMot(MOT_ID_NKY, val);
   dd5.stageMot(MOT_ID_NKP1, val);
