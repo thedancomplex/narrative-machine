@@ -11,7 +11,7 @@
 
 #define NOTE_ON 25
 
-#define KICK_MAX 4
+#define KICK_MAX 1
 int i_kick = 0;
 
 /* Make Midi Object */
@@ -66,6 +66,9 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
         if( (int)data0 == MOT_MIDI_CHAN_HIGH_HAT ) 
         { 
           dd5.hit(MOT_DRUM_HIGH_HAT); 
+        }
+        if( (int)data0 == MOT_MIDI_CHAN_KICK     ) dd5.hit(MOT_DRUM_KICK);
+        {
           i_kick++;
           if(i_kick >= KICK_MAX)
           {
@@ -73,7 +76,6 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
             i_kick = 0;
           }
         }
-        if( (int)data0 == MOT_MIDI_CHAN_KICK     ) dd5.hit(MOT_DRUM_KICK);
         if( (int)data0 == MOT_MIDI_CHAN_SNAIR    ) dd5.hit(MOT_DRUM_SNAIR);
         if( (int)data0 == MOT_MIDI_CHAN_TOM      ) dd5.hit(MOT_DRUM_TOM);
       }
@@ -118,12 +120,30 @@ int setup(int midi_port)
   /* Setup DD5 */
   int r = 0;
 
+
+  /* Set low gain vel and torque for neck */
+  double vel = MOT_VEL_CALIBRATE;
+  dd5.setVel(MOT_ID_NKY,   vel);
+  dd5.setVel(MOT_ID_NKP1,  vel);
+  dd5.setVel(MOT_ID_NKP2,  vel);
+  dd5.setVel(MOT_ID_NKR,   vel);
+
+  double tor = MOT_TOR_CALIBRATE;
+
+  dd5.setTor(MOT_ID_NKY,   tor);
+  dd5.setTor(MOT_ID_NKP1,  tor);
+  dd5.setTor(MOT_ID_NKP2,  tor);
+  dd5.setTor(MOT_ID_NKR,   tor);
+ 
   /* Add Neck Motors */
   dd5.add(MOT_ID_NKY);
   dd5.add(MOT_ID_NKY);
   dd5.add(MOT_ID_NKP1);
   dd5.add(MOT_ID_NKP2);
   dd5.add(MOT_ID_NKR);
+
+
+
 
   /* Turn On System */
   r = dd5.on();
@@ -181,15 +201,29 @@ int cleanup()
 #define HOME_NKP2 0.0
 #define HOME_NKR  0.0
 
-#define DELTA_NKY  0.5
-#define DELTA_NKP1 0.5
-#define DELTA_NKP2 0.5
-#define DELTA_NKR  0.3
+#define DELTA_NKY  0.1
+#define DELTA_NKP1 0.1
+#define DELTA_NKP2 0.1
+#define DELTA_NKR  0.1
 
 #define RAND_REZ 10001
 
 int do_rand_neck()
 {
+
+ double vel = 100.0;
+ dd5.setVel(MOT_ID_NKY,   vel);
+ dd5.setVel(MOT_ID_NKP1,  vel);
+ dd5.setVel(MOT_ID_NKP2,  vel);
+ dd5.setVel(MOT_ID_NKR,   vel);
+
+ double tor = 0.6;
+
+ dd5.setTor(MOT_ID_NKY,   tor);
+ dd5.setTor(MOT_ID_NKP1,  tor);
+ dd5.setTor(MOT_ID_NKP2,  tor);
+ dd5.setTor(MOT_ID_NKR,   tor);
+
  double k_pitch = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
  double k_roll  = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
  double k_yaw   = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
@@ -213,15 +247,13 @@ int main()
 {
   int r = setup(0);
 
-  double val = -0.3;
+  double val = 0.0;
   /* Set neck to home position */
   dd5.stageMot(MOT_ID_NKY, val);
   dd5.stageMot(MOT_ID_NKP1, val);
   dd5.stageMot(MOT_ID_NKP2, val);
   dd5.stageMot(MOT_ID_NKR, val);
   dd5.postMot();
-
-  do_rand_neck();
 
   setup_calibrate();
   set_update_loop();
