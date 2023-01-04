@@ -67,8 +67,9 @@ void mycallback( double deltatime, std::vector< unsigned char > *message, void *
         { 
           dd5.hit(MOT_DRUM_HIGH_HAT); 
         }
-        if( (int)data0 == MOT_MIDI_CHAN_KICK     ) dd5.hit(MOT_DRUM_KICK);
+        if( (int)data0 == MOT_MIDI_CHAN_KICK     )
         {
+          dd5.hit(MOT_DRUM_KICK);
           i_kick++;
           if(i_kick >= KICK_MAX)
           {
@@ -208,6 +209,8 @@ int cleanup()
 
 #define RAND_REZ 10001
 
+#define OFFSET_PITCH -0.8
+
 int do_rand_neck()
 {
 
@@ -228,8 +231,8 @@ int do_rand_neck()
  double k_roll  = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
  double k_yaw   = (double)(rand() % RAND_REZ) / (double)RAND_REZ;
 
- double pitch1 = HOME_NKP1 + DELTA_NKP1 * k_pitch;
- double pitch2 = HOME_NKP2 - DELTA_NKP2 * k_pitch;
+ double pitch1 = HOME_NKP1 + DELTA_NKP1 * k_pitch + OFFSET_PITCH;
+ double pitch2 = HOME_NKP2 - DELTA_NKP2 * k_pitch - OFFSET_PITCH;
 
  double yaw    = HOME_NKY + (DELTA_NKY * ( 1.0 - ( 2.0 * k_yaw  ) ) );
  double roll   = HOME_NKR + (DELTA_NKR * ( 1.0 - ( 2.0 * k_roll ) ) );
@@ -249,21 +252,14 @@ int main()
 
   double val = 0.0;
   /* Set neck to home position */
-  dd5.stageMot(MOT_ID_NKY, val);
-  dd5.stageMot(MOT_ID_NKP1, val);
-  dd5.stageMot(MOT_ID_NKP2, val);
-  dd5.stageMot(MOT_ID_NKR, val);
+  dd5.stageMot(MOT_ID_NKY,  val);
+  dd5.stageMot(MOT_ID_NKP1, val + OFFSET_PITCH);
+  dd5.stageMot(MOT_ID_NKP2, val - OFFSET_PITCH);
+  dd5.stageMot(MOT_ID_NKR,  val);
   dd5.postMot();
 
   setup_calibrate();
   set_update_loop();
-
-  dd5.stageMot(MOT_ID_NKY, val);
-  dd5.stageMot(MOT_ID_NKP1, val);
-  dd5.stageMot(MOT_ID_NKP2, val);
-  dd5.stageMot(MOT_ID_NKR, val);
-  dd5.postMot();
-
 
   wait_for_exit();
 //  cleanup();
