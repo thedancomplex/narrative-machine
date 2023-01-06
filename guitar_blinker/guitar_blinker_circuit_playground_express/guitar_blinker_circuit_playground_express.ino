@@ -19,11 +19,11 @@ Based on code for the adjustable sensitivity version of amplitie from:
 #include <SPI.h>
 
 #define SAMPLE_WINDOW   10  // Sample window for average level
-#define PEAK_HANG       24  // Time of pause before peak dot falls
-#define PEAK_FALL        4  // Rate of falling peak dot
+#define PEAK_HANG       4  // 24 Time of pause before peak dot falls
+#define PEAK_FALL       4  // 4  // Rate of falling peak dot
 
-#define INPUT_FLOOR     56  // Lower range of mic sensitivity in dB SPL
-#define INPUT_CEILING  110  // Upper range of mic sensitivity in db SPL
+#define INPUT_FLOOR     75  // 56  // Lower range of mic sensitivity in dB SPL
+#define INPUT_CEILING   90  // 110  // Upper range of mic sensitivity in db SPL
 
 byte peak = 16;        // Peak level of column; used for falling dots
 unsigned int sample;
@@ -31,6 +31,10 @@ byte dotCount = 0;     //Frame counter for peak dot
 byte dotHangCount = 0; //Frame counter for holding peak dot
 
 float mapf(float x, float in_min, float in_max, float out_min, float out_max);
+
+int color0 = 255;
+int color1 = 255;
+int color2 = 255;
 
 void setup() 
 {
@@ -53,7 +57,8 @@ void loop()
 
   //Fill the strip with rainbow gradient
   for (int i=0;i<=numPixels-1;i++){
-    CircuitPlayground.strip.setPixelColor(i,Wheel(map(i,0,numPixels-1,30,150)));
+    //CircuitPlayground.strip.setPixelColor(i,Wheel(map(i,0,numPixels-1,30,150)));
+    CircuitPlayground.strip.setPixelColor(i,color0,color1,color2);
   }
 
   c = mapf(peakToPeak, INPUT_FLOOR, INPUT_CEILING, numPixels, 0);
@@ -69,7 +74,8 @@ void loop()
 
   // Set the peak dot to match the rainbow gradient
   y = numPixels - peak;
-  CircuitPlayground.strip.setPixelColor(y-1,Wheel(map(y,0,numPixels-1,30,150)));
+  //CircuitPlayground.strip.setPixelColor(y-1,Wheel(map(y,0,numPixels-1,30,150)));
+  CircuitPlayground.strip.setPixelColor(y-1,color0,color1,color2);
   CircuitPlayground.strip.show();
 
   // Frame based peak dot animation
