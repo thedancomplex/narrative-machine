@@ -77,12 +77,18 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=116,47
 // GUItool: end automatically generated code
 
 
+#define RETURN_OK   0
+#define RETURN_FAIL 1
+#define FREQ_MAX    5000.0
+#define FREQ_MIN    0.0
+
 double the_volume = 0.25;
 
 double vco_1_freq = 440.0;
-double vco_delta  = 0.0;
-double vco_2_freq = 440.0 + vco_delta;
-double vco_3_freq = vco_1_freq / 2.0;
+double vco_2_delta  = 0.0;
+double vco_2_freq = 440.0 + vco_2_delta;
+double vco_3_div  = 2.0;
+double vco_3_freq = vco_1_freq / vco_3_div;
 
 
 double vco1_mix_sine_amp     = 0.25;
@@ -262,6 +268,67 @@ void setup() {
   sgtl5000_1.enable();
   sgtl5000_1.volume(the_volume);
 
+}
+
+int setVolume(double val)
+{
+  int ret = RETURN_OK;
+  if( val > 1.0 ){ val = 1.0; ret = RETURN_FAIL; }
+  if( val < 0.0 ){ val = 0.0; ret = RETURN_FAIL; }
+
+  the_volume = val;
+  
+  sgtl5000_1.volume(the_volume);
+  
+  return ret;
+}
+
+int setFreq(double val)
+{
+  return setFreq(val, vco_2_delta);
+}
+
+int setFreq(double val, double delta)
+{
+  return setFreq(val, delta, vco_3_div);
+}
+
+int setFreq(double val, double delta, double the_div)
+{
+  int ret = RETURN_OK;
+
+  double freq1 = val;
+
+  if( freq1 > FREQ_MAX ){ freq1 = FREQ_MAX; ret = RETURN_FAIL; }
+  if( freq1 < FREQ_MIN ){ freq1 = FREQ_MIN; ret = RETURN_FAIL; }
+  
+  double freq2 = freq1 + delta;
+  
+  if( freq2 > FREQ_MAX ){ freq2 = FREQ_MAX; ret = RETURN_FAIL; }
+  if( freq2 < FREQ_MIN ){ freq2 = FREQ_MIN; ret = RETURN_FAIL; }
+
+  double freq3 = freq1 / the_div;
+
+  if( freq3 > FREQ_MAX ){ freq3 = FREQ_MAX; ret = RETURN_FAIL; }
+  if( freq3 < FREQ_MIN ){ freq3 = FREQ_MIN; ret = RETURN_FAIL; }
+
+  VCO1_SINE.frequency(    freq1);
+  VCO1_SAW.frequency(     freq1);
+  VCO1_SQUARE.frequency(  freq1);
+  VCO1_TRIANGLE.frequency(freq1);
+
+  VCO2_SINE.frequency(    freq2);
+  VCO2_SAW.frequency(     freq2);
+  VCO2_SQUARE.frequency(  freq2);
+  VCO2_TRIANGLE.frequency(freq2);
+
+  VCO3_SINE.frequency(    freq3);
+  VCO3_SAW.frequency(     freq3);
+  VCO3_SQUARE.frequency(  freq3);
+  VCO3_TRIANGLE.frequency(freq3);
+
+  
+  return ret;
 }
 
 void loop() {
