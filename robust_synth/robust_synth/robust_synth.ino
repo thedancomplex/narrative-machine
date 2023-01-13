@@ -123,10 +123,10 @@ double vco3_mix_triangle_amp = 0.25;
 #define ENUM_VCO3_SQUARE_ID    2
 #define ENUM_VCO3_TRIANGLE_ID  3
 
-double vco1_amp  = 0.0;
-double vco2_amp  = 0.0;
-double vco3_amp  = 0.0;
-double noise_amp = 0.0;
+double vco1_amp  = 1.0;
+double vco2_amp  = 1.0;
+double vco3_amp  = 1.0;
+double noise_amp = 1.0;
 
 double vco3_amp_2 = 0.0;
 
@@ -187,7 +187,7 @@ void setup() {
   // put your setup code here, to run once:
   AudioMemory(1300);
 
-  double starting_amp = 0.0;
+  double starting_amp = 1.0;
 
   VCO1_SINE.begin(     starting_amp, WAVEFORM_SINE,     vco_1_freq);
   VCO2_SINE.begin(     starting_amp, WAVEFORM_SINE,     vco_2_freq);
@@ -327,6 +327,60 @@ int setFreq(double val, double delta, double the_div)
   VCO3_SQUARE.frequency(  freq3);
   VCO3_TRIANGLE.frequency(freq3);
 
+  
+  return ret;
+}
+
+int setVcoXGain(int id_vco, double k_sine, double k_saw, double k_square, double k_triangle)
+{
+  int ret = RETURN_OK;
+
+  if(k_sine     < 0.0){ k_sine     = 0.0; ret = RETURN_FAIL; }
+  if(k_saw      < 0.0){ k_saw      = 0.0; ret = RETURN_FAIL; }
+  if(k_square   < 0.0){ k_square   = 0.0; ret = RETURN_FAIL; }
+  if(k_triangle < 0.0){ k_triangle = 0.0; ret = RETURN_FAIL; }
+  
+  if( id_vco == 1 )
+  {
+    vco1_mix_sine_amp     = k_sine;
+    vco1_mix_saw_amp      = k_saw;
+    vco1_mix_square_amp   = k_saw;
+    vco1_mix_triangle_amp = k_triangle;
+    
+    VCO1_MIX.gain(ENUM_VCO1_SIN_ID,      vco1_mix_sine_amp);
+    VCO1_MIX.gain(ENUM_VCO1_SAW_ID,      vco1_mix_saw_amp);
+    VCO1_MIX.gain(ENUM_VCO1_SQUARE_ID,   vco1_mix_square_amp);
+    VCO1_MIX.gain(ENUM_VCO1_TRIANGLE_ID, vco1_mix_triangle_amp);
+
+  }
+  else if (id_vco == 2)
+  {
+    vco2_mix_sine_amp     = k_sine;
+    vco2_mix_saw_amp      = k_saw;
+    vco2_mix_square_amp   = k_saw;
+    vco2_mix_triangle_amp = k_triangle;
+    
+    VCO2_MIX.gain(ENUM_VCO2_SIN_ID,      vco2_mix_sine_amp);
+    VCO2_MIX.gain(ENUM_VCO2_SAW_ID,      vco2_mix_saw_amp);
+    VCO2_MIX.gain(ENUM_VCO2_SQUARE_ID,   vco2_mix_square_amp);
+    VCO2_MIX.gain(ENUM_VCO2_TRIANGLE_ID, vco2_mix_triangle_amp);
+  }
+  else if (id_vco == 3 )
+  {
+    vco3_mix_sine_amp     = k_sine;
+    vco3_mix_saw_amp      = k_saw;
+    vco3_mix_square_amp   = k_saw;
+    vco3_mix_triangle_amp = k_triangle;
+    
+    VCO3_MIX.gain(ENUM_VCO3_SIN_ID,      vco3_mix_sine_amp);
+    VCO3_MIX.gain(ENUM_VCO3_SAW_ID,      vco3_mix_saw_amp);
+    VCO3_MIX.gain(ENUM_VCO3_SQUARE_ID,   vco3_mix_square_amp);
+    VCO3_MIX.gain(ENUM_VCO3_TRIANGLE_ID, vco3_mix_triangle_amp);
+  }
+  else
+  {
+    ret = RETURN_FAIL;
+  }
   
   return ret;
 }
