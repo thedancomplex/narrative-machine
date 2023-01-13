@@ -128,7 +128,7 @@ double vco2_amp  = 1.0;
 double vco3_amp  = 1.0;
 double noise_amp = 1.0;
 
-double vco3_amp_2 = 0.0;
+double vco3_amp_2 = 1.0;
 
 #define ENUM_VCO1_ID  0
 #define ENUM_VCO2_ID  1
@@ -270,6 +270,81 @@ void setup() {
 
 }
 
+int setEnvelope()
+{
+  return setEnvelope(envelope_delay_ms, envelope_attack_ms, envelope_hold_ms, envelope_decay_ms, envelope_release_ms);
+}
+
+int setEnvelope(double delay_ms, double attack_ms, double hold_ms, double decay_ms, double release_ms)
+{
+  return setEnvelope( delay_ms, attack_ms, hold_ms, decay_ms, envelope_sustain_level, release_ms, envelope_relaseNoteOn_ms);
+}
+
+int setEnvelope(double delay_ms, double attack_ms, double hold_ms, double decay_ms, double sustain_level, double release_ms, double releaseNoteOn_ms)
+{
+  int ret = RETURN_OK;
+
+  if( delay_ms         < 0.0 ) { delay_ms         = 0.0; ret = RETURN_FAIL; }
+  if( attack_ms        < 0.0 ) { attack_ms        = 0.0; ret = RETURN_FAIL; }
+  if( hold_ms          < 0.0 ) { hold_ms          = 0.0; ret = RETURN_FAIL; }
+  if( decay_ms         < 0.0 ) { decay_ms         = 0.0; ret = RETURN_FAIL; }
+  if( sustain_level    < 0.0 ) { sustain_level    = 0.0; ret = RETURN_FAIL; }
+  if( release_ms       < 0.0 ) { release_ms       = 0.0; ret = RETURN_FAIL; }
+  if( releaseNoteOn_ms < 0.0 ) { releaseNoteOn_ms = 0.0; ret = RETURN_FAIL; }
+
+  //if( delay_ms         > 0.0 ) { delay_ms         = 0.0; ret = RETURN_FAIL; }
+  if( attack_ms        > 11880.0 ) { attack_ms        = 11880.0; ret = RETURN_FAIL; }
+  if( hold_ms          > 11880.0 ) { hold_ms          = 11880.0; ret = RETURN_FAIL; }
+  if( decay_ms         < 11880.0 ) { decay_ms         = 11880.0; ret = RETURN_FAIL; }
+  if( sustain_level    > 1.0     ) { sustain_level    = 1.0;     ret = RETURN_FAIL; }
+  if( release_ms       < 11880.0 ) { release_ms       = 11880.0; ret = RETURN_FAIL; }
+  //if( releaseNoteOn_ms < 0.0 ) { releaseNoteOn_ms = 0.0; ret = RETURN_FAIL; }
+
+  envelope_delay_ms        = delay_ms;
+  envelope_attack_ms       = attack_ms;
+  envelope_hold_ms         = hold_ms;
+  envelope_decay_ms        = decay_ms;
+  envelope_sustain_level   = sustain_level;
+  envelope_release_ms      = release_ms;
+  envelope_relaseNoteOn_ms = releaseNoteOn_ms;
+  
+  ENVELOPE.delay(         envelope_delay_ms);
+  ENVELOPE.attack(        envelope_attack_ms);
+  ENVELOPE.hold(          envelope_hold_ms);
+  ENVELOPE.decay(         envelope_decay_ms);
+  ENVELOPE.sustain(       envelope_sustain_level);
+  ENVELOPE.release(       envelope_release_ms);
+  ENVELOPE.releaseNoteOn( envelope_relaseNoteOn_ms);
+
+  return ret;
+}
+  
+
+int setFilterVal()
+{
+  return setFilterVal(filter_freq, filter_q, filter_octaves);
+}
+int setFilterVal(double k_freq, double k_q, double k_octave)
+{
+  int ret = RETURN_OK;
+
+  if( k_freq   < 0.0 ) { k_freq = 0.0;   ret = RETURN_FAIL; }
+  if( k_q      < 0.7 ) { k_q    = 0.7;   ret = RETURN_FAIL; }
+  if( k_q      > 5.0 ) { k_q    = 5.0;   ret = RETURN_FAIL; }
+  if( k_octave < 0.0 ) { k_octave = 0.0; ret = RETURN_FAIL; }
+  if( k_octave > 7.0 ) { k_octave = 7.0; ret = RETURN_FAIL; }
+
+  filter_freq    = k_freq;
+  filter_q       = k_q;
+  filter_octaves = k_octave;
+  
+  FILTER.frequency(filter_freq);
+  FILTER.resonance(filter_q);
+  FILTER.octaveControl(filter_octaves);
+
+  return ret;
+}
+
 int setVolume(double val)
 {
   int ret = RETURN_OK;
@@ -328,6 +403,58 @@ int setFreq(double val, double delta, double the_div)
   VCO3_TRIANGLE.frequency(freq3);
 
   
+  return ret;
+}
+
+int setFilterGain()
+{
+  return setFilterGain(mixer_low_pass, mixer_band_pass, mixer_high_pass, mixer_lfo3);
+}
+int setFilterGain(double k_low_pass, double k_band_pass, double k_high_pass, double k_lof3)
+{
+  int ret = RETURN_OK;
+  
+  if(k_low_pass       < 0.0){ k_low_pass      = 0.0; ret = RETURN_FAIL; }
+  if(k_band_pass      < 0.0){ k_band_pass     = 0.0; ret = RETURN_FAIL; }
+  if(k_high_pass      < 0.0){ k_high_pass     = 0.0; ret = RETURN_FAIL; }
+  if(k_lof3           < 0.0){ k_lof3          = 0.0; ret = RETURN_FAIL; }
+
+  mixer_low_pass  = k_low_pass;
+  mixer_band_pass = k_band_pass;
+  mixer_high_pass = k_high_pass;
+  mixer_lfo3      = k_lof3;
+  
+  MIXER_FILTER.gain(ENUM_MIXER_ID_LOW_PASS,  mixer_low_pass);
+  MIXER_FILTER.gain(ENUM_MIXER_ID_BAND_PASS, mixer_band_pass);
+  MIXER_FILTER.gain(ENUM_MIXER_ID_HIGH_PASS, mixer_high_pass);
+  MIXER_FILTER.gain(ENUM_MIXER_ID_LFO3,      mixer_lfo3);
+
+  return ret;
+}
+
+int setVcoGain()
+{
+  return setVcoGain(vco1_mix_amp, vco2_mix_amp, vco3_mix_amp, noise_mix_amp);
+}
+int setVcoGain(double k_vco1, double k_vco2, double k_vco3, double k_noise)
+{
+  int ret = RETURN_OK;
+  
+  if(k_vco1      < 0.0){ k_vco1     = 0.0; ret = RETURN_FAIL; }
+  if(k_vco2      < 0.0){ k_vco2     = 0.0; ret = RETURN_FAIL; }
+  if(k_vco3      < 0.0){ k_vco3     = 0.0; ret = RETURN_FAIL; }
+  if(k_noise     < 0.0){ k_noise    = 0.0; ret = RETURN_FAIL; }
+
+  vco1_mix_amp  = k_vco1;
+  vco2_mix_amp  = k_vco2;
+  vco3_mix_amp  = k_vco3;
+  noise_mix_amp = k_noise;
+  
+  VCO_MIXER.gain(ENUM_VCO1_ID,  vco1_mix_amp);
+  VCO_MIXER.gain(ENUM_VCO2_ID,  vco2_mix_amp);
+  VCO_MIXER.gain(ENUM_VCO3_ID,  vco3_mix_amp);
+  VCO_MIXER.gain(ENUM_NOSIE_ID, noise_mix_amp);
+
   return ret;
 }
 
