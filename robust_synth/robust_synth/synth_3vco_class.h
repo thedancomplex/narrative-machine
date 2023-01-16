@@ -119,7 +119,6 @@ class Synth3Vco
     double vco_3_div  = 2.0;
     double vco_3_freq = vco_1_freq / vco_3_div;
     
-    
     double vco1_mix_sine_amp     = 0.25;
     double vco1_mix_saw_amp      = 0.25;
     double vco1_mix_square_amp   = 0.25;
