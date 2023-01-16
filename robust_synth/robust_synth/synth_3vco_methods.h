@@ -53,6 +53,7 @@ int Synth3Vco::setSetup()
   AMP_FINAL.gain(amp_final);
 
   sgtl5000_1.enable();
+  sgtl5000_1.inputSelect(AUDIO_INPUT_MIC);
 
   ret += this->setVolume(the_volume);
 

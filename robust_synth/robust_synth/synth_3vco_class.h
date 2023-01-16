@@ -161,7 +161,7 @@ class Synth3Vco
     #define ENUM_VCO3_ID  2
     #define ENUM_NOSIE_ID 3
     
-    double vco1_mix_amp  = 0.0;
+    double vco1_mix_amp  = 1.0;
     double vco2_mix_amp  = 0.0;
     double vco3_mix_amp  = 0.0;
     double noise_mix_amp = 0.0;
@@ -171,7 +171,7 @@ class Synth3Vco
     double filter_q       =   0.707;
     double filter_octaves =   2.5;
     
-    double mixer_filter_low_pass  = 0.0;
+    double mixer_filter_low_pass  = 1.0;
     double mixer_filter_band_pass = 0.0;
     double mixer_filter_high_pass = 0.0;
     double mixer_filter_vco3      = 0.0;
@@ -202,8 +202,8 @@ class Synth3Vco
     #define ENUM_MIXER_FINAL_NO_FILTER   2
     #define ENUM_MIXER_FINAL_VCO3        3
     
-    double mixer_final_all         = 1.0;
-    double mixer_final_no_envelope = 0.0;
+    double mixer_final_all         = 0.0;
+    double mixer_final_no_envelope = 1.0;
     double mixer_final_no_filter   = 0.0;
     double mixer_final_vco3        = 0.0;
     
