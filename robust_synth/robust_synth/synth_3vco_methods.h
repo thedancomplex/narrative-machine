@@ -9,41 +9,18 @@ int Synth3Vco::setSetup()
    // put your setup code here, to run once:
   AudioMemory(1300);
 
-  double starting_amp = 1.0;
+  int ret = RETURN_OK;
 
-  VCO1_SINE.begin(     starting_amp, WAVEFORM_SINE,     vco_1_freq);
-  VCO2_SINE.begin(     starting_amp, WAVEFORM_SINE,     vco_2_freq);
-  VCO3_SINE.begin(     starting_amp, WAVEFORM_SINE,     vco_3_freq);
-
-  VCO1_SAW.begin(      starting_amp, WAVEFORM_SAWTOOTH, vco_1_freq);
-  VCO2_SAW.begin(      starting_amp, WAVEFORM_SAWTOOTH, vco_2_freq);
-  VCO3_SAW.begin(      starting_amp, WAVEFORM_SAWTOOTH, vco_3_freq);
-
-  VCO1_SQUARE.begin(   starting_amp, WAVEFORM_SAWTOOTH, vco_1_freq);
-  VCO2_SQUARE.begin(   starting_amp, WAVEFORM_SAWTOOTH, vco_2_freq);
-  VCO3_SQUARE.begin(   starting_amp, WAVEFORM_SAWTOOTH, vco_3_freq);
-
-  VCO1_TRIANGLE.begin( starting_amp, WAVEFORM_TRIANGLE, vco_1_freq);
-  VCO2_TRIANGLE.begin( starting_amp, WAVEFORM_TRIANGLE, vco_2_freq);
-  VCO3_TRIANGLE.begin( starting_amp, WAVEFORM_TRIANGLE, vco_3_freq);
-
+  /* Start the VCOs */
+  ret += this->setStartVco();
+  
   NOISE.amplitude(     starting_amp);
 
-
-  VCO1_MIX.gain(ENUM_VCO1_SIN_ID,      vco1_mix_sine_amp);
-  VCO1_MIX.gain(ENUM_VCO1_SAW_ID,      vco1_mix_saw_amp);
-  VCO1_MIX.gain(ENUM_VCO1_SQUARE_ID,   vco1_mix_square_amp);
-  VCO1_MIX.gain(ENUM_VCO1_TRIANGLE_ID, vco1_mix_triangle_amp);
-
-  VCO2_MIX.gain(ENUM_VCO2_SIN_ID,      vco2_mix_sine_amp);
-  VCO2_MIX.gain(ENUM_VCO2_SAW_ID,      vco2_mix_saw_amp);
-  VCO2_MIX.gain(ENUM_VCO2_SQUARE_ID,   vco2_mix_square_amp);
-  VCO2_MIX.gain(ENUM_VCO2_TRIANGLE_ID, vco2_mix_triangle_amp);
-
-  VCO3_MIX.gain(ENUM_VCO3_SIN_ID,      vco3_mix_sine_amp);
-  VCO3_MIX.gain(ENUM_VCO3_SAW_ID,      vco3_mix_saw_amp);
-  VCO3_MIX.gain(ENUM_VCO3_SQUARE_ID,   vco3_mix_square_amp);
-  VCO3_MIX.gain(ENUM_VCO3_TRIANGLE_ID, vco3_mix_triangle_amp);
+  /* Setup Each VCOs gains */
+  /*                       id   k_sine    k_saw    k_square    k_triangle */ 
+  ret += this->setVcoXGain( 1 ,    0.0 ,    1.0 ,       0.0 ,         0.0 );
+  ret += this->setVcoXGain( 2 ,    0.0 ,    0.0 ,       0.0 ,         0.0 );
+  ret += this->setVcoXGain( 3 ,    0.0 ,    0.0 ,       0.0 ,         0.0 );
 
   VCO1_AMP.gain(   vco1_amp);
   VCO2_AMP.gain(   vco2_amp);
@@ -51,46 +28,35 @@ int Synth3Vco::setSetup()
   NOISE_AMP.gain(  noise_amp);
   VCO3_AMP_2.gain( vco3_amp_2);
 
-
-  VCO_MIXER.gain(ENUM_VCO1_ID,  vco1_mix_amp);
-  VCO_MIXER.gain(ENUM_VCO2_ID,  vco2_mix_amp);
-  VCO_MIXER.gain(ENUM_VCO3_ID,  vco3_mix_amp);
-  VCO_MIXER.gain(ENUM_NOSIE_ID, noise_mix_amp);
-
+  /* Set VCO mixing gain */
+  ret += this->setVcoGain();
 
   AMP_PRE_FILTER.gain(amp_pre_filter);
 
-  FILTER.frequency(filter_freq);
-  FILTER.resonance(filter_q);
-  FILTER.octaveControl(filter_octaves);
+  /* Set default filter value */
+  ret += this->setFilterVal();
 
-  MIXER_FILTER.gain(ENUM_MIXER_ID_LOW_PASS,  mixer_low_pass);
-  MIXER_FILTER.gain(ENUM_MIXER_ID_BAND_PASS, mixer_band_pass);
-  MIXER_FILTER.gain(ENUM_MIXER_ID_HIGH_PASS, mixer_high_pass);
-  MIXER_FILTER.gain(ENUM_MIXER_ID_LFO3,      mixer_lfo3);
 
+  /* Set gains of each Filter type */
+  ret += this->setFilterGain();
+  
   AMP_POST_FILTER.gain(amp_post_filter);
 
-  ENVELOPE.delay(         envelope_delay_ms);
-  ENVELOPE.attack(        envelope_attack_ms);
-  ENVELOPE.hold(          envelope_hold_ms);
-  ENVELOPE.decay(         envelope_decay_ms);
-  ENVELOPE.sustain(       envelope_sustain_level);
-  ENVELOPE.release(       envelope_release_ms);
-  ENVELOPE.releaseNoteOn( envelope_relaseNoteOn_ms);
+  /* Set envelope paramaters */
+  ret += this->setEnvelope();
+
   AMP_ENVELOPE.gain(      envelope_amp);
 
-  MIXER_FINAL.gain(ENUM_MIXER_FINAL_ALL,         mixer_final_all);
-  MIXER_FINAL.gain(ENUM_MIXER_FINAL_NO_ENVELOPE, mixer_final_no_envelope);
-  MIXER_FINAL.gain(ENUM_MIXER_FINAL_NO_FILTER,   mixer_final_no_filter);
-  MIXER_FINAL.gain(ENUM_MIXER_FINAL_VCO3,        mixer_final_vco3);
+  /* Set Final Mixer Gains */
+  ret += this->setMixerFinalGain();
 
   AMP_FINAL.gain(amp_final);
 
   sgtl5000_1.enable();
-  sgtl5000_1.volume(the_volume);
 
-  return RETURN_OK;
+  ret += this->setVolume(the_volume);
+
+  return ret;
 }
 
 int Synth3Vco::setStartVco()
