@@ -16,8 +16,27 @@ class NoteFreq
       4186.0,  4435.0, 4699.0,  4978.0,  5274.0,  5588.0,  5920.0,  6272.0,  6645.0,  7040.0,  7459.0,  7902.0
     };
 
+    const int      c4 = 49 - 1;
+    const int midi_c4 = 60;
+    const int      a4 = 48 + 10 - 1;
+
     NoteFreq()
     {
       return;
+    }
+
+    double note(int n)
+    {
+      if (n >= NUM_NOTES) return -1.0;
+      return this->freq[n];
+    }
+
+    double noteMidi(int n)
+    {
+      int dn = this->midi_c4 - this->c4;
+      int nn = n - dn;
+      if( nn <      0        ) return -1.0;
+      if( nn > (NUM_NOTES-1) ) return -1.0;
+      return this->freq[nn];
     }
 };

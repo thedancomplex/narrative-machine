@@ -13,4 +13,8 @@ void setup()
 void loop() 
 {
   // put your main code here, to run repeatedly:
+  s3v.setFreq(nf.note(nf.c4));
+  delay(1000);
+  s3v.setFreq(nf.note(nf.a4));
+  delay(1000);
 }
