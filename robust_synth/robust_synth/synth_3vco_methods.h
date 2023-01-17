@@ -1,14 +1,17 @@
 Synth3Vco::Synth3Vco()
 {
-  
   return;
 }
 
 int Synth3Vco::setSetup()
 {
    // put your setup code here, to run once:
-  AudioMemory(1300);
-
+  AudioMemory(300);
+  
+  sgtl5000_1.enable();
+  sgtl5000_1.inputSelect(AUDIO_INPUT_MIC);
+  sgtl5000_1.unmuteHeadphone();
+  
   int ret = RETURN_OK;
 
   /* Start the VCOs */
@@ -20,7 +23,7 @@ int Synth3Vco::setSetup()
   /*                       id   k_sine    k_saw    k_square    k_triangle */ 
   ret += this->setVcoXGain( 1 ,    0.0 ,    1.0 ,       0.0 ,         0.0 );
   ret += this->setVcoXGain( 2 ,    0.0 ,    0.0 ,       0.0 ,         0.0 );
-  ret += this->setVcoXGain( 3 ,    0.0 ,    0.0 ,       0.0 ,         0.0 );
+  ret += this->setVcoXGain( 3 ,    1.0 ,    0.0 ,       0.0 ,         0.0 );
 
   VCO1_AMP.gain(   vco1_amp);
   VCO2_AMP.gain(   vco2_amp);
@@ -52,8 +55,7 @@ int Synth3Vco::setSetup()
 
   AMP_FINAL.gain(amp_final);
 
-  sgtl5000_1.enable();
-  sgtl5000_1.inputSelect(AUDIO_INPUT_MIC);
+
 
   ret += this->setVolume(the_volume);
 
@@ -178,6 +180,7 @@ int Synth3Vco::setFilterVal()
 {
   return this->setFilterVal(filter_freq, filter_q, filter_octaves);
 }
+
 int Synth3Vco::setFilterVal(double k_freq, double k_q, double k_octave)
 {
   int ret = RETURN_OK;
@@ -256,7 +259,6 @@ int Synth3Vco::setFreq(double val, double delta, double the_div)
   VCO3_SQUARE.frequency(  freq3);
   VCO3_TRIANGLE.frequency(freq3);
 
-  
   return ret;
 }
 
@@ -264,6 +266,7 @@ int Synth3Vco::setFilterGain()
 {
   return this->setFilterGain(mixer_low_pass, mixer_band_pass, mixer_high_pass, mixer_lfo3);
 }
+
 int Synth3Vco::setFilterGain(double k_low_pass, double k_band_pass, double k_high_pass, double k_lof3)
 {
   int ret = RETURN_OK;
@@ -290,6 +293,7 @@ int Synth3Vco::setVcoGain()
 {
   return this->setVcoGain(vco1_mix_amp, vco2_mix_amp, vco3_mix_amp, noise_mix_amp);
 }
+
 int Synth3Vco::setVcoGain(double k_vco1, double k_vco2, double k_vco3, double k_noise)
 {
   int ret = RETURN_OK;

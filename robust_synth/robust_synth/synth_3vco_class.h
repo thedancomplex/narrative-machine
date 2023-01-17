@@ -113,9 +113,9 @@ class Synth3Vco
   
     double the_volume = 0.25;
     
-    double vco_1_freq = 440.0;
+    double vco_1_freq = 240.0;
     double vco_2_delta  = 0.0;
-    double vco_2_freq = 440.0 + vco_2_delta;
+    double vco_2_freq = vco_1_freq + vco_2_delta;
     double vco_3_div  = 2.0;
     double vco_3_freq = vco_1_freq / vco_3_div;
     
