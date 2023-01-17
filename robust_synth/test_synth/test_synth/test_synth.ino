@@ -22,6 +22,7 @@ AudioConnection          patchCord7(VCO1_AMP, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=81,42
 // GUItool: end automatically generated code
 
+#define VOLUME_PIN 15
 
 void setVolume(double vol)
 {
@@ -48,6 +49,9 @@ void setFreq(double hz)
 }
 
 void setup() {
+
+  pinMode(VOLUME_PIN, INPUT);
+  
   // put your setup code here, to run once:
   AudioMemory(300);
   sgtl5000_1.enable();
@@ -59,6 +63,8 @@ void setup() {
   VCO1_SAW.begin(WAVEFORM_SAWTOOTH);
   VCO1_SQUARE.begin(WAVEFORM_SQUARE);
   VCO1_TRIANGLE.begin(WAVEFORM_TRIANGLE);
+
+  VCO1_AMP.gain(1.0);
 
   for( int i = 0; i < 4; i++ )
   {
@@ -72,15 +78,17 @@ double freq = 440.0;
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+
+  int v = analogRead(VOLUME_PIN);
+  double vol = (double)v / 1023.0;
   
   freq = 440.0;
   setFreq(freq);
-  setVolume(1.0);
-  delay(100);
+  setVolume(vol);
+  delay(200);
 
   freq = 880.0;
   setFreq(freq);
-  setVolume(0.5);
-  delay(100);
+  setVolume(vol);
+  delay(200);
 }
