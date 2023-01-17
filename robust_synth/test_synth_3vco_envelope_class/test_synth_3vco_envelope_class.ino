@@ -58,22 +58,27 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=81,42
 #define NUM_AUDIO 12
 AudioSynthWaveform* the_audio[NUM_AUDIO];
 
-the_audio[0]  = VCO1_SQUARE;      //xy=251.6667022705078,229.99995613098145
-the_audio[1]  = VCO1_TRIANGLE;      //xy=251.66665649414062,290.0000247955322
-the_audio[2]  = VCO3_SQUARE; //xy=258,728
-the_audio[3]  = VCO3_TRIANGLE; //xy=258,789
-the_audio[4]  = VCO2_SQUARE;    //xy=264,464
-the_audio[5]  = VCO2_TRIANGLE;  //xy=264,525
-the_audio[6]  = VCO1_SINE;      //xy=266.6666717529297,118.33334922790527
-the_audio[7]  = VCO1_SAW;      //xy=266.6666717529297,171.6666669845581
-the_audio[8]  = VCO3_SINE; //xy=273,617
-the_audio[9]  = VCO3_SAW; //xy=273,670
-the_audio[10] = VCO2_SINE;      //xy=279,353
-the_audio[11] = VCO2_SAW;       //xy=279,406
+
 
 
 
 #define VOLUME_PIN 15
+
+void setAudioVectors()
+{
+  the_audio[0]  = &VCO1_SQUARE;      //xy=251.6667022705078,229.99995613098145
+  the_audio[1]  = &VCO1_TRIANGLE;      //xy=251.66665649414062,290.0000247955322
+  the_audio[2]  = &VCO3_SQUARE; //xy=258,728
+  the_audio[3]  = &VCO3_TRIANGLE; //xy=258,789
+  the_audio[4]  = &VCO2_SQUARE;    //xy=264,464
+  the_audio[5]  = &VCO2_TRIANGLE;  //xy=264,525
+  the_audio[6]  = &VCO1_SINE;      //xy=266.6666717529297,118.33334922790527
+  the_audio[7]  = &VCO1_SAW;      //xy=266.6666717529297,171.6666669845581
+  the_audio[8]  = &VCO3_SINE; //xy=273,617
+  the_audio[9]  = &VCO3_SAW; //xy=273,670
+  the_audio[10] = &VCO2_SINE;      //xy=279,353
+  the_audio[11] = &VCO2_SAW;       //xy=279,406
+}
 
 void setVolume(double vol)
 {
@@ -126,6 +131,7 @@ void setFreq(double hz)
 }
 
 void setup() {
+  setAudioVectors();
 
   pinMode(VOLUME_PIN, INPUT);
   
