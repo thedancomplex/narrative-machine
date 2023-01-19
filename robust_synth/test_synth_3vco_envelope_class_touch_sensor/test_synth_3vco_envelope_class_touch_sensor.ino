@@ -38,7 +38,7 @@ void loop() {
   */
   int t = to.getTouch();
 
-  if( t == TOUCH_START ) { sv.noteOn();  SerialUSB.println("noteOn");  }
-  if( t == TOUCH_STOP  ) { sv.noteOff(); SerialUSB.println("noteOff"); }
+  if     ( t == TOUCH_START ) { sv.noteOn();  SerialUSB.println("noteOn");  }
+  else if( t == TOUCH_STOP  ) { sv.noteOff(); SerialUSB.println("noteOff"); }
   
 }

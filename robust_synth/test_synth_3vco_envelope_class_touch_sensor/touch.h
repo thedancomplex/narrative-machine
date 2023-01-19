@@ -5,8 +5,10 @@
 #define _BV(bit) (1 << (bit)) 
 #endif
 
+#define TOUCH_NONE    0
 #define TOUCH_START   1
 #define TOUCH_STOP    2
+#define TOUCH_HOLD    3
 
 class Touch
 {
@@ -69,23 +71,24 @@ int Touch::getTouch()
   for (uint8_t i=0; i<12; i++) {
     // it if *is* touched and *wasnt* touched before, alert!
     if ((currtouched & _BV(i)) && !(lasttouched & _BV(i)) ) {
-      Serial.print(i); Serial.println(" touched");
+//      Serial.print(i); Serial.println(" touched");
       ret_touched++;
     }
     // if it *was* touched and now *isnt*, alert!
     if (!(currtouched & _BV(i)) && (lasttouched & _BV(i)) ) {
-      Serial.print(i); Serial.println(" released");
+//      Serial.print(i); Serial.println(" released");
       ret_release++;
     }
   }
 
-  Serial.println(currtouched);
+  //Serial.println(currtouched);
+  if      ( ( currtouched > 0  ) & ( lasttouched >  0 ) ) ret = TOUCH_HOLD;
+  else if ( ( currtouched == 0 ) & ( lasttouched == 0 ) ) ret = TOUCH_NONE;
+  else if ( currtouched >  0                            ) ret = TOUCH_START;
+  else if ( currtouched == 0                            ) ret = TOUCH_STOP;
 
   // reset our state
   lasttouched = currtouched;
 
-  if      ( ret_touched > 0 ) return TOUCH_START;
-  else if ( ret_release > 0 ) return TOUCH_STOP;
-
-  return 0;
+  return ret;
 }
