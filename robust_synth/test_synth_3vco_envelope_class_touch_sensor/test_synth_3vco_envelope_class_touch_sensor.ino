@@ -23,20 +23,18 @@ void loop() {
   double vol = sv.getVolumeKnob();
   sv.setVolume(vol*2.0);
   
-  double freq = nf.note(n);
   
-  n++;
-  if ( n >= NUM_NOTES ) n = 0 ;
-  /*
-  sv.setFreq(freq);
-  sv.setVolume(vol);
-  SerialUSB.println(freq);
-  sv.noteOn();
-  delay(100);
-  sv.noteOff();
-  delay(200);
-  */
-  int t = to.getTouch();
+  int n = 60; 
+  
+  int note = 0;
+  int t = to.getTouch(&note);
+  int the_note = to.getNote(note);
+  SerialUSB.println(the_note);
+  if ( the_note > 0 )
+  {
+    double freq = nf.note( n + the_note );
+    sv.setFreq(freq);
+  }
 
   if     ( t == TOUCH_START ) { sv.noteOn();  SerialUSB.println("noteOn");  }
   else if( t == TOUCH_STOP  ) { sv.noteOff(); SerialUSB.println("noteOff"); }

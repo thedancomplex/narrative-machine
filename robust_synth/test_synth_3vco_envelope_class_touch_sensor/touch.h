@@ -16,13 +16,16 @@ class Touch
     Touch();
     int setup();
     int getTouch();
+    int getTouch(int *note);
     int debug();
+    int getNote(int b);
 
   private:
     Adafruit_MPR121 cap = Adafruit_MPR121();
     // Keeps track of the last pins touched
     
     // so we know when buttons are 'released'
+    
     uint16_t lasttouched = 0;
     uint16_t currtouched = 0;
     int touch_state = 0;
@@ -61,7 +64,36 @@ int Touch::debug()
   delay(100);
 }
 
+int Touch::getNote(int b)
+{
+  int ret = 0;
+  if      ( b >= 0x8000 ) ret = 16;
+  else if ( b >= 0x4000 ) ret = 15;
+  else if ( b >= 0x2000 ) ret = 14;
+  else if ( b >= 0x1000 ) ret = 13;
+  else if ( b >= 0x800  ) ret = 12;
+  else if ( b >= 0x400  ) ret = 11;
+  else if ( b >= 0x200  ) ret = 10;
+  else if ( b >= 0x100  ) ret =  9;
+  else if ( b >= 0x80   ) ret =  8;
+  else if ( b >= 0x40   ) ret =  7;
+  else if ( b >= 0x20   ) ret =  6;
+  else if ( b >= 0x10   ) ret =  5;
+  else if ( b >= 0x8    ) ret =  4;
+  else if ( b >= 0x4    ) ret =  3;
+  else if ( b >= 0x2    ) ret =  2;
+  else if ( b >= 0x1    ) ret =  1;
+
+  return ret;
+}
+
 int Touch::getTouch()
+{
+  int note;
+  return this->getTouch(&note);
+}
+
+int Touch::getTouch(int *note)
 {
   int ret = 0;
   int ret_touched = 0;
@@ -84,8 +116,10 @@ int Touch::getTouch()
   //Serial.println(currtouched);
   if      ( ( currtouched > 0  ) & ( lasttouched >  0 ) ) ret = TOUCH_HOLD;
   else if ( ( currtouched == 0 ) & ( lasttouched == 0 ) ) ret = TOUCH_NONE;
-  else if ( currtouched >  0                            ) ret = TOUCH_START;
-  else if ( currtouched == 0                            ) ret = TOUCH_STOP;
+  else if (   currtouched >  0                          ) ret = TOUCH_START;
+  else if (   currtouched == 0                          ) ret = TOUCH_STOP;
+
+  *note = currtouched;
 
   // reset our state
   lasttouched = currtouched;
