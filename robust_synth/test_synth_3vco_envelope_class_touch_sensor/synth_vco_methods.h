@@ -98,7 +98,7 @@ void SynthVco::setFreq(double hz)
   this->setFreq(ENUM_VCO2, ENUM_SQUARE,   vco_2_freq);
   this->setFreq(ENUM_VCO2, ENUM_SAW,      vco_2_freq);
 
-  double vco_3_freq = hz / 2.0;
+  double vco_3_freq = hz / 4.0;
 
   this->setFreq(ENUM_VCO3, ENUM_SINE,     vco_3_freq);
   this->setFreq(ENUM_VCO3, ENUM_TRIANGLE, vco_3_freq);

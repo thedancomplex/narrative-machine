@@ -62,7 +62,6 @@ void loop() {
   //double vol = sv.getVolumeKnob();
   //sv.setVolume(vol*2.0);
   
-  
   int n = 60; 
   
   int note     = 0;
