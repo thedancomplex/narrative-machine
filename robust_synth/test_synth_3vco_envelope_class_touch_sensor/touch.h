@@ -15,6 +15,7 @@ class Touch
   public:
     Touch();
     int setup();
+    int setup( int the_id );
     int getTouch();
     int getTouch(int *note);
     int debug();
@@ -38,7 +39,12 @@ Touch::Touch()
 
 int Touch::setup()
 {
-  if (!cap.begin(0x5A)) {
+  return this->setup(0x5A);
+}
+
+int Touch::setup( int the_id )
+{
+  if (!cap.begin((uint8_t)the_id)) {
     /* no device found */
     return 1;
   }
@@ -117,7 +123,7 @@ int Touch::getTouch(int *note)
   if      ( ( currtouched > 0  ) & ( lasttouched >  0 ) ) ret = TOUCH_HOLD;
   else if ( ( currtouched == 0 ) & ( lasttouched == 0 ) ) ret = TOUCH_NONE;
   else if (   currtouched >  0                          ) ret = TOUCH_START;
-  else if (   currtouched == 0                          ) ret = TOUCH_STOP;
+  else if ( ( currtouched == 0 )                        ) ret = TOUCH_STOP;
 
   *note = currtouched;
 

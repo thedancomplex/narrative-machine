@@ -36,7 +36,7 @@ void loop() {
     sv.setFreq(freq);
   }
 
-  if     ( t == TOUCH_START ) { sv.noteOn();  SerialUSB.println("noteOn");  }
-  else if( t == TOUCH_STOP  ) { sv.noteOff(); SerialUSB.println("noteOff"); }
+  if     ( ( t == TOUCH_START )                       ) { sv.noteOn();  SerialUSB.println("noteOn");  }
+  else if( ( t == TOUCH_STOP  ) | ( t == TOUCH_NONE ) ) { sv.noteOff(); SerialUSB.println("noteOff"); }
   
 }
