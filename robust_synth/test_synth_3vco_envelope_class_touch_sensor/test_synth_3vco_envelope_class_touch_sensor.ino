@@ -21,6 +21,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   double vol = sv.getVolumeKnob();
+  sv.setVolume(vol*2.0);
   
   double freq = nf.note(n);
   
@@ -36,7 +37,8 @@ void loop() {
   delay(200);
   */
   int t = to.getTouch();
-  if( t == TOUCH_START ) { sv.noteOn();  SerialUSB.println("noteOn");  delay(100);}
-  if( t == TOUCH_STOP  ) { sv.noteOff(); SerialUSB.println("noteOff"); delay(200);}
+
+  if( t == TOUCH_START ) { sv.noteOn();  SerialUSB.println("noteOn");  }
+  if( t == TOUCH_STOP  ) { sv.noteOff(); SerialUSB.println("noteOff"); }
   
 }
